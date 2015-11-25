@@ -19,9 +19,9 @@ android {name}.apk androiddebugkey`
 			- Eclipse -> Java Build Bath -> Order and Export -> Select robotium and let it to the top.
 4. Install it in to the device.
 	- Suggested you use eclipse to run the test in each device first. Than you can skip the painful step below.
-	- 1. `adb -s {device id} push {name}.apk`
+	- 1. `adb -s {device id} push {name}.apk /data/local/tmp`
 	- 2. `adb -s {device id} install {name}.apk`
-	- 3. `adb -s {device id} push {test package}.apk`
+	- 3. `adb -s {device id} push {test package}.apk /data/local/tmp`
 	- 4. `adb -s {device id} install {test package}.apk`
 	- The `{test package}.apk` can be found in `{path to your test project}/bin/`
 5. Run the test.
