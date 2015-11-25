@@ -3,14 +3,16 @@ Basic Flow
 
 1. Download the apk for our target apps.
 2. Resign the apk.
-	- 1. Rename the apk from {name}.apk to {name}.zip
-	- 2. unzip it and DELETE the META-INF folder
-	- 3. Re-zip the apk file
-	- 4. Rename it to {name}.apk
-	- 5. Type this command `jarsigner -keystore ~/.android/debug.keystore -storepass android -keypass
+	- You may use this [tools](https://code.google.com/p/apk-resigner/) to resign
+	- OR re-sign it manually by the below step
+		- 1. Rename the apk from {name}.apk to {name}.zip
+		- 2. unzip it and DELETE the META-INF folder
+		- 3. Re-zip the apk file
+		- 4. Rename it to {name}.apk
+		- 5. Type this command `jarsigner -keystore ~/.android/debug.keystore -storepass android -keypass
 android {name}.apk androiddebugkey`
-	- 6. Type this command `zipalign 4 {name}.apk {temp name}.apk`
-	- 7. Type this command `mv {temp name}.apk {name}.apk`
+		- 6. Type this command `zipalign 4 {name}.apk {temp name}.apk`
+		- 7. Type this command `mv {temp name}.apk {name}.apk`
 3. Create our test project.
 	- You can take the bindle test as a example.
 	- ** IMPORTANT ** 
@@ -101,4 +103,29 @@ Remark
 1. Remember to update the apk and the testing apk if any changed.
 	- Eclipse will help you to update automatically.
 	- Manaully test need to update it by your self.
+
+	
+autoinstall.sh
+----
+A bash script for install the apk to all the connected device automatically.
+
+It take four parameters.
+
+```
+source autoinstall.sh {p1} {p2} {p3} {p4}
+```
+
+Parameters| Meaning/Required value
+-------- | --------
+p1 | target apk location
+p2 | target apk package name
+p3 | testing case apk location
+p4 | testing case apk package name
+
+Example
+
+```
+source autoinstall.sh s1/bindle.apk com.bindlechat.Bindle  ~/AndroidStudioProjects/qa-automation/Robotium/bindle/BindleAutomationTest/bin/BindleAutomationTest.apk com.oursky.bindle.test
+
+```
 
