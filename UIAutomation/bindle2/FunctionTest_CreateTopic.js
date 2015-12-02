@@ -63,9 +63,9 @@ beforeTest();
 /*------------------------------------------------------------------*/
 // begin smoke test
 if (doSmokeTest) {
-    logStartMsg = "create topic: share text";
+    /*logStartMsg = "create topic: share text";
     logPassMsg = "pass: text topic created";
-    testCreateTextTopic("Automation Test");
+    testCreateTextTopic("Automation Test");*/
     
     logStartMsg = "create topic: share image";
     logPassMsg = "pass: image topic created";
@@ -86,11 +86,13 @@ function testCreateTextTopic(textTopic) {
         // action: share a text topic
         target.frontMostApp().mainWindow().buttons()["share text btn"].tap();
         target.frontMostApp().keyboard().typeString(textTopic);
+        // also test the cross button
         target.frontMostApp().mainWindow().buttons()["green cross"].tap();
         target.frontMostApp().mainWindow().buttons()["share text btn"].tap();
         target.frontMostApp().keyboard().typeString(textTopic);
         target.frontMostApp().mainWindow().buttons()["Share"].tap();
         target.delay(1);
+        
         // result: first enter Lobby, then enter the topic room
         var lobbyName = target.frontMostApp().navigationBar().name();
         if (lobbyName !== "LobbyView") {
@@ -117,7 +119,44 @@ function testCreateTextTopic(textTopic) {
 function testCreateImageTopic() {
     UIALogger.logStart(logStartMsg);
     try {
+        // action: share an image topic
+        target.frontMostApp().mainWindow().buttons()["share camera btn"].tap();
+        target.frontMostApp().actionSheet().collectionViews()[0].cells()["From Gallery"].buttons()["From Gallery"].tap();
+        // define the photo to choose for each testing device
+        if (deviceNo == -2) {
+            target.frontMostApp().mainWindow().tableViews()[0].cells()["Moments"].tap();
+            target.frontMostApp().mainWindow().collectionViews()[0].cells()["Photo, Landscape, August 09, 2012, 5:55 AM"].tap();
+        }
+        // also test the cross button
+        target.frontMostApp().mainWindow().buttons()["blue cross"].tap();
+        target.frontMostApp().mainWindow().buttons()["share camera btn"].tap();
+        target.frontMostApp().actionSheet().collectionViews()[0].cells()["From Gallery"].buttons()["From Gallery"].tap();
+        // define the photo to choose for each testing device
+        if (deviceNo == -2) {
+            target.frontMostApp().mainWindow().tableViews()[0].cells()["Camera Roll"].tap();
+            target.frontMostApp().mainWindow().collectionViews()[0].cells()["Photo, Landscape, March 13, 2011, 8:17 AM"].tap();
+        }
+        target.frontMostApp().mainWindow().buttons()["Share"].tap();
+        target.delay(1);
         
+        // result: first enter Lobby, then enter the topic room
+        var lobbyName = target.frontMostApp().navigationBar().name();
+        if (lobbyName !== "LobbyView") {
+            throw new Error("cannot enter lobby");
+        }
+        target.frontMostApp().mainWindow().tableViews()[0].cells()[screenname].tap();
+        var findTopic = target.frontMostApp().mainWindow().scrollViews()[0].staticTexts().firstWithPredicate("name contains \"View Photo\"");
+        if (!findTopic.isValid()) {
+            throw new Error("cannot find topic");
+        }
+        else {
+            // tap to enlarge the image
+            target.frontMostApp().mainWindow().scrollViews()[0].staticTexts()["View Photo"].tap();
+            target.delay(4);
+            target.frontMostApp().mainWindow().scrollViews()[0].images()[0].tap();
+            target.delay(1);
+            target.frontMostApp().navigationBar().rightButton().tap();
+        }
         
         // pass
         UIALogger.logPass(logPassMsg);
