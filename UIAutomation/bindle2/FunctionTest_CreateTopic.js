@@ -63,33 +63,40 @@ beforeTest();
 /*------------------------------------------------------------------*/
 // begin smoke test
 if (doSmokeTest) {
-    /*logStartMsg = "create topic: share text";
+    logStartMsg = "create topic: share text";
     logPassMsg = "pass: text topic created";
-    testCreateTextTopic("Automation Test");*/
+    testCreateTextTopic(false, "Automation Test");
     
     logStartMsg = "create topic: share image";
     logPassMsg = "pass: image topic created";
-    testCreateImageTopic();
+    testCreateImageTopic(false);
     
     logStartMsg = "create topic: share link";
     logPassMsg = "pass: link topic created";
-    testCreateLinkTopic();
+    testCreateLinkTopic(false);
 }
 afterTest();
 // end smoke test
 /*------------------------------------------------------------------*/
 
 // test: create text topic
-function testCreateTextTopic(textTopic) {
+function testCreateTextTopic(testCross, textTopic) {
+    if (testCross === undefined)
+        testCross = true;
+    
     UIALogger.logStart(logStartMsg);
     try {
         // action: share a text topic
         target.frontMostApp().mainWindow().buttons()["share text btn"].tap();
         target.frontMostApp().keyboard().typeString(textTopic);
-        // also test the cross button
-        target.frontMostApp().mainWindow().buttons()["green cross"].tap();
-        target.frontMostApp().mainWindow().buttons()["share text btn"].tap();
-        target.frontMostApp().keyboard().typeString(textTopic);
+        
+        if (testCross) {
+            // also test the cross button
+            target.frontMostApp().mainWindow().buttons()["green cross"].tap();
+            target.frontMostApp().mainWindow().buttons()["share text btn"].tap();
+            target.frontMostApp().keyboard().typeString(textTopic);
+        }
+        
         target.frontMostApp().mainWindow().buttons()["Share"].tap();
         target.delay(1);
         
@@ -99,6 +106,7 @@ function testCreateTextTopic(textTopic) {
             throw new Error("cannot enter lobby");
         }
         target.frontMostApp().mainWindow().tableViews()[0].cells()[screenname].tap();
+        target.delay(1);
         var findTopic = target.frontMostApp().mainWindow().scrollViews()[0].staticTexts().firstWithPredicate("name contains \""+textTopic+"\"");
         if (!findTopic.isValid()) {
             throw new Error("cannot find topic");
@@ -106,6 +114,7 @@ function testCreateTextTopic(textTopic) {
         
         // pass
         UIALogger.logPass(logPassMsg);
+        afterUnitTest();
     }
     catch (err) {
         // fail
@@ -116,7 +125,10 @@ function testCreateTextTopic(textTopic) {
 }
 
 // test: create image topic
-function testCreateImageTopic() {
+function testCreateImageTopic(testCross) {
+    if (testCross === undefined)
+        testCross = true;
+    
     UIALogger.logStart(logStartMsg);
     try {
         // action: share an image topic
@@ -127,15 +139,19 @@ function testCreateImageTopic() {
             target.frontMostApp().mainWindow().tableViews()[0].cells()["Moments"].tap();
             target.frontMostApp().mainWindow().collectionViews()[0].cells()["Photo, Landscape, August 09, 2012, 5:55 AM"].tap();
         }
-        // also test the cross button
-        target.frontMostApp().mainWindow().buttons()["blue cross"].tap();
-        target.frontMostApp().mainWindow().buttons()["share camera btn"].tap();
-        target.frontMostApp().actionSheet().collectionViews()[0].cells()["From Gallery"].buttons()["From Gallery"].tap();
-        // define the photo to choose for each testing device
-        if (deviceNo == -2) {
-            target.frontMostApp().mainWindow().tableViews()[0].cells()["Camera Roll"].tap();
-            target.frontMostApp().mainWindow().collectionViews()[0].cells()["Photo, Landscape, March 13, 2011, 8:17 AM"].tap();
+        
+        if (testCross) {
+            // also test the cross button
+            target.frontMostApp().mainWindow().buttons()["blue cross"].tap();
+            target.frontMostApp().mainWindow().buttons()["share camera btn"].tap();
+            target.frontMostApp().actionSheet().collectionViews()[0].cells()["From Gallery"].buttons()["From Gallery"].tap();
+            // define the photo to choose for each testing device
+            if (deviceNo == -2) {
+                target.frontMostApp().mainWindow().tableViews()[0].cells()["Camera Roll"].tap();
+                target.frontMostApp().mainWindow().collectionViews()[0].cells()["Photo, Landscape, March 13, 2011, 8:17 AM"].tap();
+            }
         }
+        
         target.frontMostApp().mainWindow().buttons()["Share"].tap();
         target.delay(1);
         
@@ -145,6 +161,7 @@ function testCreateImageTopic() {
             throw new Error("cannot enter lobby");
         }
         target.frontMostApp().mainWindow().tableViews()[0].cells()[screenname].tap();
+        target.delay(1);
         var findTopic = target.frontMostApp().mainWindow().scrollViews()[0].staticTexts().firstWithPredicate("name contains \"View Photo\"");
         if (!findTopic.isValid()) {
             throw new Error("cannot find topic");
@@ -156,10 +173,13 @@ function testCreateImageTopic() {
             target.frontMostApp().mainWindow().scrollViews()[0].images()[0].tap();
             target.delay(1);
             target.frontMostApp().navigationBar().rightButton().tap();
+            target.delay(1);
+            target.frontMostApp().mainWindow().scrollViews()[0].buttons()["content arrow up"].tap();
         }
         
         // pass
         UIALogger.logPass(logPassMsg);
+        afterUnitTest();
     }
     catch (err) {
         // fail
@@ -170,13 +190,46 @@ function testCreateImageTopic() {
 }
 
 // test: create link topic
-function testCreateLinkTopic() {
+function testCreateLinkTopic(testCross) {
+    if (testCross === undefined)
+        testCross = true;
+    
     UIALogger.logStart(logStartMsg);
     try {
+        // action: share a link topic
+        target.frontMostApp().mainWindow().buttons()["Button"].tap();
+        target.frontMostApp().keyboard().typeString("http://www.oursky.com");
+        if (testCross) {
+            // also test the cross button
+            target.frontMostApp().mainWindow().buttons()["purple cross"].tap();
+            target.frontMostApp().mainWindow().buttons()["Button"].tap();
+            target.frontMostApp().keyboard().typeString("http://www.oursky.com");
+        }
+        target.frontMostApp().mainWindow().buttons()["Share"].tap();
+        target.delay(1);
         
+        // result: first enter Lobby, then enter the topic room
+        var lobbyName = target.frontMostApp().navigationBar().name();
+        if (lobbyName !== "LobbyView") {
+            throw new Error("cannot enter lobby");
+        }
+        target.frontMostApp().mainWindow().tableViews()[0].cells()[screenname].tap();
+        target.delay(1);
+        var findTopic = target.frontMostApp().mainWindow().scrollViews()[0].staticTexts().firstWithPredicate("name contains \"Oursky Limited\"");
+        if (!findTopic.isValid()) {
+            throw new Error("cannot find topic");
+        }
+        else {
+            // tap to view link content
+            target.delay(1);
+            target.frontMostApp().mainWindow().scrollViews()[0].staticTexts().firstWithPredicate("name contains \"Oursky Limited\"").tap();
+            target.delay(1);
+            target.frontMostApp().mainWindow().scrollViews()[0].buttons()["content arrow up"].tap();
+        }
         
         // pass
         UIALogger.logPass(logPassMsg);
+        afterUnitTest();
     }
     catch (err) {
         // fail
@@ -243,9 +296,14 @@ function beforeTest() {
 }
 
 function afterTest() {
-    target.frontMostApp().mainWindow().scrollViews()[0].buttons()["nav up"].tap();
+    target.frontMostApp().mainWindow().buttons()["Talk"].tap();
     target.frontMostApp().mainWindow().buttons()["@"+username.toLowerCase()].tap();
     target.frontMostApp().mainWindow().buttons()["Log Out"].tap();
+}
+
+function afterUnitTest() {
+    target.frontMostApp().mainWindow().scrollViews()[0].buttons()["nav up"].tap();
+    target.frontMostApp().mainWindow().buttons()["Tell"].tap();
 }
 
 /*------------------------------------------------------------------*/
