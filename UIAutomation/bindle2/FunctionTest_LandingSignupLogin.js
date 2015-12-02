@@ -7,7 +7,7 @@ var doEdgeTestSignup = true;
 var doEdgeTestLogin = true;
 
 // user input variables
-var accountNo = 8; // tester1-4 signed up in staging
+var accountNo = 1; // tester1-4 signed up in staging
 // remark: if you run smoke test and edge test together, accountNo i+1 will also be signed up
 var username = "tester" + accountNo;
 var screenname = "Tester" + accountNo;
@@ -330,7 +330,7 @@ function continueSignupLogin(username, isValid, isHUD, isOffline, isLandscape) {
     
     // check result
     if (isValid) {
-        checkEnterLobby(username);
+        checkEnterCreateTopic(username);
     }
     else if (isHUD) {
         checkCorrectHUD(isOffline);
@@ -346,14 +346,15 @@ function continueSignupLogin(username, isValid, isHUD, isOffline, isLandscape) {
     }
 }
 
-function checkEnterLobby(username) {
-    // result: enter lobby
-    var lobbyName = target.frontMostApp().navigationBar().name();
-    if (lobbyName !== "LobbyView") {
-        throw new Error("cannot enter lobby");
+function checkEnterCreateTopic(username) {
+    // result: enter create topic
+    var findTitle = target.frontMostApp().mainWindow().staticTexts().firstWithPredicate("name contains \"What's Up?\"");
+    if (!findTitle.isValid()) {
+        throw new Error("cannot find What's Up?");
     }
-    UIALogger.logDebug("Enter Lobby");
+    UIALogger.logDebug("Enter Create Topic");
     // after action: logout
+    target.frontMostApp().mainWindow().buttons()["Talk"].tap();
     target.frontMostApp().mainWindow().buttons()["@"+username.toLowerCase()].tap();
     target.frontMostApp().mainWindow().buttons()["Log Out"].tap();
     // log pass
