@@ -6,7 +6,6 @@ import java.util.UUID;
 import junit.framework.AssertionFailedError;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
-import android.view.View;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
@@ -76,10 +75,9 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		chatAction.mentionSomeone("chat", chatAllText); // it mean mention all
 		device().waitForText(chatAllText);
 		device().sleep(2000);
-		
-		chatAction.mentionSomeone(receiver, chatSomeoneText); // it mean mention all
-		device().waitForText(chatSomeoneText);
-		
+
+		chatAction.backToLobby();
+
 		// User B
 		switchAccountToTestAc3();
 		goChatRoom(roomName);
@@ -98,6 +96,51 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		checkNormalTextExist(sender);
 		checkChatAllTextExist(sender);
 		checkEmoteTextExist(sender);
+		chatAction.backToLobby();
+		
+		// User A
+		switchAccountToTestAc2();
+		goChatRoom(roomName);
+		chatAction.deleteChatRoom();
+	}
+	
+	/**
+	 * Flow:
+	 * User A create new room,
+	 * 		invite user B and C come to this room
+	 * 		mention to user B
+	 * Switch to User B
+	 * 		Check the blue label exist
+	 * Switch to User C 
+	 * 		Check the blue label not exist?
+	 * Switch back to User A
+	 * 		Delete chat room.
+	 */
+
+	@LargeTest
+	public void testTheBlueLabelForMention() {
+		String roomName = createChatRoom();
+		String sender = allUserName[0];
+		String receiver = allUserName[1];
+		
+		// User A
+		addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
+	
+		chatAction.mentionSomeone(receiver, chatSomeoneText); // it mean mention all
+		device().waitForText(chatSomeoneText);
+		chatAction.backToLobby();
+
+		// User B
+		switchAccountToTestAc3();
+		goChatRoom(roomName);
+		checkMentionTextExist(sender, receiver, true);
+		chatAction.backToLobby();
+		
+		
+		// User C
+		switchAccountToTestAc4();
+		goChatRoom(roomName);
+		checkMentionTextExist(sender, receiver, false);
 		chatAction.backToLobby();
 		
 		// User A
@@ -136,6 +179,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		device().clickOnView((ImageView) device().getView("id/info_icon_image_view"));
 		device().waitForActivity("ChatRoomDetailActivity");
 		device().waitForText("Edit");
+		device().sleep(2000);
 		device().scrollDown();
 		device().clickOnText("Add by Username");
 		device().waitForActivity("AddByUsernameActivity");
@@ -183,6 +227,17 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		assertTrue("It haven't should the blue label for chat all message",
 				device().getView("id/mention_indicator").isEnabled());
 		assertTrue("The chat all message cannot receive",
+				device().waitForText(expectedString));
+	}
+	
+	private void checkMentionTextExist(String sender, String receiver, boolean isLabelExist) {
+		String expectedString = String.format("%s: @%s %s",sender, receiver, chatSomeoneText);
+		if(isLabelExist) {
+			assertTrue("It haven't should the blue label for message that isn't mention him",
+					device().getView("id/mention_indicator").isEnabled());
+		}
+		Log.i("ssss", expectedString);
+		assertTrue("The mention message cannot receive",
 				device().waitForText(expectedString));
 	}
 	
