@@ -3,6 +3,7 @@ package com.oursky.bindle;
 import android.test.ActivityInstrumentationTestCase2;
 
 import com.robotium.solo.Solo;
+import com.robotium.solo.Solo.Config;
 
 @SuppressWarnings("rawtypes")
 public class AndroidTestBase extends ActivityInstrumentationTestCase2{
@@ -21,7 +22,11 @@ public class AndroidTestBase extends ActivityInstrumentationTestCase2{
     @Override
     public void setUp() throws Exception {
     	super.setUp();
-        mDevice = new Solo(getInstrumentation(), getActivity());
+    	Solo.Config config = new Config();
+    	config.timeout_large = 15000;
+    	config.timeout_small = 20000;
+        mDevice = new Solo(getInstrumentation(), config, getActivity());
+        mDevice.unlockScreen();
     }
 
     @Override
