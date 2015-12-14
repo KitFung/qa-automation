@@ -15,6 +15,12 @@ android {name}.apk androiddebugkey`
 		- 7. Type this command `mv {temp name}.apk {name}.apk`
 3. Create our test project.
 	- You can take the bindle test as a example.
+	- Remember to set the instrumentation in AndroidManifest.xml
+	```
+	<instrumentation
+        android:name="android.test.InstrumentationTestRunner"
+        android:targetPackage="com.bindlechat.Bindle" />
+    ```
 	- ** IMPORTANT ** 
 		- Download [robotium](http://mvnrepository.com/artifact/com.jayway.android.robotium/robotium-solo/5.2.1) and import to your project.
 		- Remember to export it.
@@ -125,7 +131,7 @@ p4 | testing case apk package name
 Example
 
 ```
-source autoinstall.sh s1/bindle.apk com.bindlechat.Bindle  ~/AndroidStudioProjects/qa-automation/Robotium/bindle/BindleAutomationTest/bin/BindleAutomationTest.apk com.oursky.bindle.test
+source autoinstall.sh ~/Desktop/selendroid/s1/bindle.apk com.bindlechat.Bindle  ~/AndroidStudioProjects/qa-automation/Robotium/bindle/BindleAutomationTest/bin/BindleAutomationTest.apk com.oursky.bindle.test
 
 ```
 

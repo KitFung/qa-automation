@@ -5,11 +5,8 @@ TARGET_PACKAGE_NAME="$2"
 TEST_CASE_APK_PATH="$3"
 TEST_CASE_PACKAGE_NAME="$4"
 
-adb devices > tmp0
-cut -f1 tmp0 > tmp1
-sed '1d;$d' tmp1 > tmp
-rm tmp0
-rm tmp1
+adb start-server
+adb get-serialno > tmp
 
 while read line
     do 
