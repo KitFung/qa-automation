@@ -55,8 +55,8 @@ public class OperationInChat {
     	device.clickOnView((ImageButton) device.getView("id/sendMessage_button"));
 	}
 	
-	public void chatToAll(String text) {
-		String formattedText = String.format("@chat %s", text);
+	public void mentionSomeone(String username, String text) {
+		String formattedText = String.format("@%s %s", username, text);
 		device.clearEditText((EditText) device.getView("id/sendMessage_editText"));
     	device.enterText((EditText) device.getView("id/sendMessage_editText"), formattedText);
     	device.clickOnView((ImageButton) device.getView("id/sendMessage_button"));
