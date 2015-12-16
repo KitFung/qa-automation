@@ -19,13 +19,11 @@ public class OperationInChat {
 	}
 	
 	private void openInfoPage() {
-		while(!device.getView("id/info_icon_image_view").isEnabled()) {
-			device.sleep(2000);
-		}
+		device.sleep(10000); // Just let it fail if it load toooo slow
 		device.clickOnView((ImageView) device.getView("id/info_icon_image_view"));
 		device.waitForActivity("ChatRoomDetailActivity");
 		// wait the info page fully loaded
-		while(!device.searchText("Edit")) {
+		while(!device.searchText("Add by Username")) {
 			device.sleep(2000);
 		}
 	}
@@ -35,9 +33,15 @@ public class OperationInChat {
 		device.waitForActivity("ChatRoomEditActivity");
 	}
 	
+	public void openOptionMenuForUser(String name) {
+		openInfoPage();
+		device.scrollDown();
+		device.sleep(2000);
+		device.clickOnText(name);
+	}
+	
 	public void leaveChat() {
-		device.clickOnView((ImageView) device.getView("id/info_icon_image_view"));
-		device.waitForActivity("ChatRoomDetailActivity");
+		openInfoPage();
 		device.clickOnView((TextView) device.getView("id/leave_button"));
 		device.clickOnButton("Leave");
 		device.waitForActivity("LobbyActivity");
@@ -87,6 +91,7 @@ public class OperationInChat {
 	public void addOtherUser(String[] allName) {
 		openInfoPage();
 		device.scrollDown();
+		device.sleep(1000);
 		device.clickOnText("Add by Username");
 		device.waitForActivity("AddByUsernameActivity");
 		for(String s: allName) {
@@ -128,10 +133,7 @@ public class OperationInChat {
 	}
 
 	public void kickUser(String poorguy, boolean permanentKick) {
-		openInfoPage();
-		device.scrollDown();
-		device.sleep(2000);
-		device.clickOnText(poorguy);
+		openOptionMenuForUser(poorguy);
 		device.clickOnText("Kick User");
 		if (permanentKick) {
 			device.clickOnText("Permanently");
@@ -141,15 +143,14 @@ public class OperationInChat {
 	}
 	
 	public void raiseUserToMod(String name) {
-		openInfoPage();
-		device.clickOnText(name);
+		openOptionMenuForUser(name);
 		device.clickOnText("Promote to Moderator");
 	}
 	
 	public void raiseUserToAdmin(String name) {
-		openInfoPage();
-		device.clickOnText(name);
+		openOptionMenuForUser(name);
 		device.clickOnText("Promote to Admin");
+		device.clickOnButton("Yes");
 	}
 
 }
