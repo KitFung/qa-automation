@@ -8,7 +8,7 @@ import android.widget.TextView;
 
 public class TestOpenChat extends AndroidLoggedInTestBase{
 
-	private String openChatRoomName = "Test";
+	private String openChatRoomName = "openchat";  // "Test" in production
 	private String s;
 	private OperationInChat chatAction;
 

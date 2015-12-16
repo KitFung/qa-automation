@@ -47,7 +47,7 @@ public class TestLoginPage extends AndroidTestBase {
 // Part 2. Login Success without SMS verify message
 // ===========================================================
 
-    private String email = "TestAcc2@TestAcc.com";
+    private String email = "TestAc2@TestAc.com";
     private String userName = "TestAc2"; 
 	private String password = "TestPassword2";
 	
