@@ -67,14 +67,37 @@ public class OperationInChat {
 	}
 	
 	public void deleteChatRoom() {
+		while(!device.getView("id/info_icon_image_view").isEnabled()) {
+			device.sleep(2000);
+		}
 		device.clickOnView((ImageView) device.getView("id/info_icon_image_view"));
 		device.waitForActivity("ChatRoomDetailActivity");
+		while(!device.searchText("Edit")) {
+			device.sleep(2000);
+		}
 		device.clickOnView((View) device.getView("id/action_edit"));
 		device.waitForActivity("ChatRoomEditActivity");
 		device.clickOnView((Button) device.getView("id/delete_chat_button"));
 		device.clickOnButton("Delete");
 		device.clickOnButton("OK");
 		device.waitForActivity("LobbyActivity");
+	}
+
+	public void kickUser(String poorguy, boolean permanentKick) {
+		device.clickOnView((ImageView) device.getView("id/info_icon_image_view"));
+		device.waitForActivity("ChatRoomDetailActivity");
+		while(!device.searchText("Edit")) {
+			device.sleep(2000);
+		}
+		device.scrollDown();
+		device.sleep(2000);
+		device.clickOnText(poorguy);
+		device.clickOnText("Kick User");
+		if (permanentKick) {
+			device.clickOnText("Permanently");
+		} else {
+			device.clickOnText("Once");
+		}
 	}
 
 }

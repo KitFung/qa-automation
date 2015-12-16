@@ -23,8 +23,8 @@ public class AndroidTestBase extends ActivityInstrumentationTestCase2{
     public void setUp() throws Exception {
     	super.setUp();
     	Solo.Config config = new Config();
-    	config.timeout_large = 15000;
-    	config.timeout_small = 20000;
+    	config.timeout_large = 20000;
+    	config.timeout_small = 30000;
         mDevice = new Solo(getInstrumentation(), config, getActivity());
         mDevice.unlockScreen();
     }
@@ -32,5 +32,11 @@ public class AndroidTestBase extends ActivityInstrumentationTestCase2{
     @Override
     public void tearDown() throws Exception {
         mDevice.finishOpenedActivities();
+        try {
+			mDevice.finalize();
+		} catch (Throwable e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
     }
 }

@@ -1,12 +1,13 @@
 package com.oursky.bindle;
 
 import java.util.Arrays;
-import java.util.UUID;
 
 import junit.framework.AssertionFailedError;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
+import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.TextView;
 
@@ -18,6 +19,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 	private String chatSomeoneText = "chatSomeoneText";
 	private String emoteText = "emoteText";
 	private OperationInChat chatAction;
+	private OperationInLobby lobbyAction;
 	
 	public TestPrivateRoom() throws ClassNotFoundException {
 		super();
@@ -27,6 +29,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 	public void setUp() throws Exception {
 		super.setUp();
 		chatAction = new OperationInChat(device());
+		lobbyAction = new OperationInLobby(device());
 	}
 	
 	/**
@@ -54,7 +57,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 	
 	@LargeTest
 	public void testSendDifferentTypeOfMessage() {
-		String roomName = createChatRoom();
+		String roomName = lobbyAction.createChatRoomUntilSuccess();
 		String sender = allUserName[0];
 		String receiver = allUserName[1];
 		
@@ -80,7 +83,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 
 		// User B
 		switchAccountToTestAc3();
-		goChatRoom(roomName);
+		lobbyAction.goChatRoom(roomName);
 		checkWhisperTextExist(sender, receiver, true);
 		checkNormalTextExist(sender);
 		checkChatAllTextExist(sender);
@@ -91,7 +94,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		// User C
 		switchAccountToTestAc4();
 		receiver = allUserName[2];
-		goChatRoom(roomName);
+		lobbyAction.goChatRoom(roomName);
 		checkWhisperTextExist(sender, receiver, false);
 		checkNormalTextExist(sender);
 		checkChatAllTextExist(sender);
@@ -100,7 +103,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		
 		// User A
 		switchAccountToTestAc2();
-		goChatRoom(roomName);
+		lobbyAction.goChatRoom(roomName);
 		chatAction.deleteChatRoom();
 	}
 	
@@ -119,7 +122,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 
 	@LargeTest
 	public void testTheBlueLabelForMention() {
-		String roomName = createChatRoom();
+		String roomName = lobbyAction.createChatRoomUntilSuccess();
 		String sender = allUserName[0];
 		String receiver = allUserName[1];
 		
@@ -132,73 +135,155 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 
 		// User B
 		switchAccountToTestAc3();
-		goChatRoom(roomName);
+		lobbyAction.goChatRoom(roomName);
 		checkMentionTextExist(sender, receiver, true);
 		chatAction.backToLobby();
 		
-		
 		// User C
 		switchAccountToTestAc4();
-		goChatRoom(roomName);
+		lobbyAction.goChatRoom(roomName);
 		checkMentionTextExist(sender, receiver, false);
 		chatAction.backToLobby();
 		
 		// User A
 		switchAccountToTestAc2();
-		goChatRoom(roomName);
+		lobbyAction.goChatRoom(roomName);
+		chatAction.deleteChatRoom();
+	}
+	
+	@LargeTest
+	public void testKickUserOutofChatRoomOnce() {
+		String roomName = lobbyAction.createChatRoomUntilSuccess();
+		String poorguy = allUserName[1];
+		
+		// User A add user
+		addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
+		chatAction.backToLobby();
+		// User B check room
+		device().sleep(5000);
+		switchAccountToTestAc3();
+		lobbyAction.goChatRoom(roomName);
+		chatAction.backToLobby();
+		// User C check room
+		device().sleep(5000);
+		switchAccountToTestAc4();
+		lobbyAction.goChatRoom(roomName);
+		chatAction.backToLobby();
+		// User A kick User B
+		device().sleep(5000);
+		switchAccountToTestAc2();
+		lobbyAction.goChatRoom(roomName);
+		chatAction.kickUser(poorguy, false);
+		chatAction.backToLobby();
+		
+		// User B check room exist?
+		device().sleep(5000);
+		switchAccountToTestAc3();
+		checkRoomExist(roomName, false);
+		lobbyAction.searchChatRoom(roomName);
+		checkAbletoKnock(roomName);
+		chatAction.backToLobby();
+		checkRoomExist(roomName, false);
+		
+		// User C check room exist?
+		device().sleep(5000);
+		switchAccountToTestAc4();
+		checkRoomExist(roomName, true);
+		chatAction.backToLobby();
+		
+		// User A delete chat room
+		device().sleep(5000);
+		switchAccountToTestAc2();
+		lobbyAction.goChatRoom(roomName);
+		chatAction.deleteChatRoom();
+	}
+	
+	
+	@LargeTest
+	public void testKictUserOutofChatRoomForever() {
+		String roomName = lobbyAction.createChatRoomUntilSuccess();
+		String poorguy = allUserName[1];
+		// User A add user
+		addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
+		chatAction.backToLobby();
+		// User B check room
+		switchAccountToTestAc3();
+		lobbyAction.goChatRoom(roomName);
+		chatAction.backToLobby();
+		// User C check room
+		switchAccountToTestAc4();
+		lobbyAction.goChatRoom(roomName);
+		chatAction.backToLobby();
+		// User A kick user B permanently
+		switchAccountToTestAc2();
+		lobbyAction.goChatRoom(roomName);
+		chatAction.kickUser(poorguy, true);
+		chatAction.backToLobby();
+		
+		// User B check room
+		switchAccountToTestAc3();
+		checkRoomExist(roomName, false);
+		lobbyAction.searchChatRoom(roomName);
+		checkGetBannedToChat();
+		chatAction.backToLobby();
+		checkRoomExist(roomName, false);
+		// User C check room
+		switchAccountToTestAc4();
+		checkRoomExist(roomName, true);
+		chatAction.backToLobby();
+		// User A delete room
+		switchAccountToTestAc2();
+		lobbyAction.goChatRoom(roomName);
 		chatAction.deleteChatRoom();
 	}
 
+//	@LargeTest
+//	public void testRaiseUserToMod() {
+//		
+//	}
+	
+//	@LargeTest
+//	public void testRaiseUserToAdmin() {
+//		
+//	}
+	
 	//======================================================================
 
-	public String createChatRoom() {
-		String roomName = null;
-		while(true) {
-			roomName = getUUID();
-			device().clickOnView(device().getView("id/create_chat_view"));
-			device().waitForActivity("CreateChatRoomActivity");
-			device().clearEditText((EditText)device().getView("id/chat_room_name_edit_text"));
-	    	device().enterText((EditText) device().getView("id/chat_room_name_edit_text"), roomName);
-	    	while (true){
-				try{
-					device().sleep(2000);
-					device().clickOnView((TextView) device().getView("id/action_done"));
-					device().waitForActivity("ChatRoomActivity");
-					break;
-				}catch(AssertionFailedError e) {
-				}
-			}
-	    	break;
-		}
-		device().waitForText(String.format("#%s", roomName));
-		device().sleep(4000);
-		return roomName;
-	}
-	
 	public void addOtherUser(String[] allName) {
+		device().sleep(10000);
 		device().clickOnView((ImageView) device().getView("id/info_icon_image_view"));
 		device().waitForActivity("ChatRoomDetailActivity");
 		device().waitForText("Edit");
-		device().sleep(2000);
+		device().sleep(4000);
 		device().scrollDown();
 		device().clickOnText("Add by Username");
 		device().waitForActivity("AddByUsernameActivity");
 		for(String s: allName) {
-			device().clearEditText((EditText) device().getView("id/search_src_text"));
-			device().enterText((EditText) device().getView("id/search_src_text"), s);
-			device().pressSoftKeyboardSearchButton();
-			device().waitForText("Search Users");
-			device().clickOnButton(0);
-			device().waitForText("Added");
-			device().clickOnView((TextView) device().getView("id/user_search"));
+			while(true) {
+				try {
+					device().clearEditText((EditText) device().getView("id/search_src_text"));
+					device().enterText((EditText) device().getView("id/search_src_text"), s);
+					device().pressSoftKeyboardSearchButton();
+					device().waitForText("Search Users");
+					device().clickOnButton(0);
+					device().waitForText("Added");
+					device().clickOnView((TextView) device().getView("id/user_search"));
+					break;
+				} catch (AssertionFailedError e) {
+					if(device().searchText("Opps")) {
+						device().clickOnButton(0);
+					}
+					device().goBackToActivity("ChatRoomDetailActivity");
+					device().waitForText("Edit");
+					device().sleep(4000);
+					device().scrollDown();
+					device().clickOnText("Add by Username");
+					device().waitForActivity("AddByUsernameActivity");
+					continue;
+				}
+			}
 		}
 		device().goBackToActivity("ChatRoomActivity");
-	}
-	
-	private void goChatRoom(String name) {
-		device().clickOnText("#"+name);
-		device().waitForActivity("ChatRoomActivity");
-		device().sleep(4000);
 	}
 
 	//======================================================================
@@ -247,9 +332,30 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 				device().waitForText(expectedString));
 	}
 	
-	 public static String getUUID(){ 
-        String s = UUID.randomUUID().toString(); 
-        return s.substring(0,8);
-    } 
+	public void checkRoomExist(String roomName, boolean shouldExist) {
+		device().sleep(4000);
+		if (shouldExist) {
+			assertTrue("The expected chat room is disappear",
+					device().searchText(roomName));
+		} else {
+			assertFalse("The chat romm should not exist in the list since you have be kicked out",
+					device().searchText(roomName));
+		}
+	}
+	
+	public void checkGetBannedToChat() {
+		assertFalse("Still can be able to knock the chat room which you have been permentaly kicked",
+				device().searchText("Sorry, a moderator has banned you from this chat."));
+	}
+	
+	public void checkAbletoKnock(String roomName) {
+		device().waitForActivity("id/channel_name_text_view");
+		device().clickInList(0);
+		device().waitForActivity("JoinChatRoomActivity");
+		assertEquals("#"+roomName, ((TextView) device().getView("id/channel_name_text_view")).getText());
+		assertTrue("Cannot knock the room after kicked once",
+				device().waitForView((Button) device().getView("id/join_button")));
+		device().clickOnView((ImageButton) device().getView("id/dismiss_button"));
+	}
 
 }
