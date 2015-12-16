@@ -47,7 +47,7 @@ public class OperationInLobby {
 					device.sleep(2000);
 					device.clickOnView((TextView) device.getView("id/action_done"));
 					device.waitForActivity("ChatRoomActivity");
-					device.waitForView((ImageView) device.getView("id/info_icon_image_view"));
+					device.assertCurrentActivity("", "ChatRoomActivity");
 					break;
 				}catch(AssertionFailedError e) {
 					if(device.searchText("This chatroom already exists.")) {

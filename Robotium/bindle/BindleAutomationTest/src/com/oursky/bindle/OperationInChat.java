@@ -1,5 +1,6 @@
 package com.oursky.bindle;
 
+import junit.framework.AssertionFailedError;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -15,6 +16,23 @@ public class OperationInChat {
 	
 	OperationInChat(Solo device) {
 		this.device = device;
+	}
+	
+	private void openInfoPage() {
+		while(!device.getView("id/info_icon_image_view").isEnabled()) {
+			device.sleep(2000);
+		}
+		device.clickOnView((ImageView) device.getView("id/info_icon_image_view"));
+		device.waitForActivity("ChatRoomDetailActivity");
+		// wait the info page fully loaded
+		while(!device.searchText("Edit")) {
+			device.sleep(2000);
+		}
+	}
+	
+	private void openEditPage() {
+		device.clickOnView((View) device.getView("id/action_edit"));
+		device.waitForActivity("ChatRoomEditActivity");
 	}
 	
 	public void leaveChat() {
@@ -66,17 +84,43 @@ public class OperationInChat {
 		device.goBackToActivity("LobbyActivity");
 	}
 	
+	public void addOtherUser(String[] allName) {
+		openInfoPage();
+		device.scrollDown();
+		device.clickOnText("Add by Username");
+		device.waitForActivity("AddByUsernameActivity");
+		for(String s: allName) {
+			while(true) {
+				try {
+					device.clearEditText((EditText) device.getView("id/search_src_text"));
+					device.enterText((EditText) device.getView("id/search_src_text"), s);
+					device.pressSoftKeyboardSearchButton();
+					device.waitForText("Search Users");
+					device.clickOnButton(0);
+					device.waitForText("Added");
+					device.clickOnView((TextView) device.getView("id/user_search"));
+					break;
+				} catch (AssertionFailedError e) {
+					if(device.searchText("Opps")) {
+						device.clickOnButton(0);
+					}
+					device.goBackToActivity("ChatRoomDetailActivity");
+					device.waitForText("Edit");
+					device.sleep(4000);
+					device.scrollDown();
+					device.clickOnText("Add by Username");
+					device.waitForActivity("AddByUsernameActivity");
+					continue;
+				}
+			}
+		}
+		device.goBackToActivity("ChatRoomActivity");
+	}
+	
 	public void deleteChatRoom() {
-		while(!device.getView("id/info_icon_image_view").isEnabled()) {
-			device.sleep(2000);
-		}
-		device.clickOnView((ImageView) device.getView("id/info_icon_image_view"));
-		device.waitForActivity("ChatRoomDetailActivity");
-		while(!device.searchText("Edit")) {
-			device.sleep(2000);
-		}
-		device.clickOnView((View) device.getView("id/action_edit"));
-		device.waitForActivity("ChatRoomEditActivity");
+		openInfoPage();
+		openEditPage();
+		
 		device.clickOnView((Button) device.getView("id/delete_chat_button"));
 		device.clickOnButton("Delete");
 		device.clickOnButton("OK");
@@ -84,11 +128,7 @@ public class OperationInChat {
 	}
 
 	public void kickUser(String poorguy, boolean permanentKick) {
-		device.clickOnView((ImageView) device.getView("id/info_icon_image_view"));
-		device.waitForActivity("ChatRoomDetailActivity");
-		while(!device.searchText("Edit")) {
-			device.sleep(2000);
-		}
+		openInfoPage();
 		device.scrollDown();
 		device.sleep(2000);
 		device.clickOnText(poorguy);
@@ -98,6 +138,18 @@ public class OperationInChat {
 		} else {
 			device.clickOnText("Once");
 		}
+	}
+	
+	public void raiseUserToMod(String name) {
+		openInfoPage();
+		device.clickOnText(name);
+		device.clickOnText("Promote to Moderator");
+	}
+	
+	public void raiseUserToAdmin(String name) {
+		openInfoPage();
+		device.clickOnText(name);
+		device.clickOnText("Promote to Admin");
 	}
 
 }

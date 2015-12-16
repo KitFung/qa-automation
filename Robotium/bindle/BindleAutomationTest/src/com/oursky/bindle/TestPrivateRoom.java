@@ -2,13 +2,10 @@ package com.oursky.bindle;
 
 import java.util.Arrays;
 
-import junit.framework.AssertionFailedError;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.util.Log;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class TestPrivateRoom extends AndroidLoggedInTestBase{
@@ -62,7 +59,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		String receiver = allUserName[1];
 		
 		// User A
-		addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
+		chatAction.addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
 		chatAction.talkNormal(normalText);
 		checkNormalTextExist(sender);
 		device().sleep(2000);
@@ -127,7 +124,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		String receiver = allUserName[1];
 		
 		// User A
-		addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
+		chatAction.addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
 	
 		chatAction.mentionSomeone(receiver, chatSomeoneText); // it mean mention all
 		device().waitForText(chatSomeoneText);
@@ -157,7 +154,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		String poorguy = allUserName[1];
 		
 		// User A add user
-		addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
+		chatAction.addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
 		chatAction.backToLobby();
 		// User B check room
 		device().sleep(5000);
@@ -204,7 +201,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		String roomName = lobbyAction.createChatRoomUntilSuccess();
 		String poorguy = allUserName[1];
 		// User A add user
-		addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
+		chatAction.addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
 		chatAction.backToLobby();
 		// User B check room
 		switchAccountToTestAc3();
@@ -235,55 +232,6 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		switchAccountToTestAc2();
 		lobbyAction.goChatRoom(roomName);
 		chatAction.deleteChatRoom();
-	}
-
-//	@LargeTest
-//	public void testRaiseUserToMod() {
-//		
-//	}
-	
-//	@LargeTest
-//	public void testRaiseUserToAdmin() {
-//		
-//	}
-	
-	//======================================================================
-
-	public void addOtherUser(String[] allName) {
-		device().sleep(10000);
-		device().clickOnView((ImageView) device().getView("id/info_icon_image_view"));
-		device().waitForActivity("ChatRoomDetailActivity");
-		device().waitForText("Edit");
-		device().sleep(4000);
-		device().scrollDown();
-		device().clickOnText("Add by Username");
-		device().waitForActivity("AddByUsernameActivity");
-		for(String s: allName) {
-			while(true) {
-				try {
-					device().clearEditText((EditText) device().getView("id/search_src_text"));
-					device().enterText((EditText) device().getView("id/search_src_text"), s);
-					device().pressSoftKeyboardSearchButton();
-					device().waitForText("Search Users");
-					device().clickOnButton(0);
-					device().waitForText("Added");
-					device().clickOnView((TextView) device().getView("id/user_search"));
-					break;
-				} catch (AssertionFailedError e) {
-					if(device().searchText("Opps")) {
-						device().clickOnButton(0);
-					}
-					device().goBackToActivity("ChatRoomDetailActivity");
-					device().waitForText("Edit");
-					device().sleep(4000);
-					device().scrollDown();
-					device().clickOnText("Add by Username");
-					device().waitForActivity("AddByUsernameActivity");
-					continue;
-				}
-			}
-		}
-		device().goBackToActivity("ChatRoomActivity");
 	}
 
 	//======================================================================
