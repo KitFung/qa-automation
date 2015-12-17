@@ -47,7 +47,7 @@ public class TestPrivateChatPermissionAssign extends AndroidLoggedInTestBase{
 		device().clickOnButton(0);
 		chatAction.backToLobby();
 		
-		Log.d(TAG, "Switch Account to user B");
+		Log.d(TAG, "Switching Account to user B");
 		switchAccountToTestAc3();
 		Log.d(TAG, "Switched Account to user B");
 		Log.d(TAG, "Checking user B have the permission of mod");
@@ -58,7 +58,7 @@ public class TestPrivateChatPermissionAssign extends AndroidLoggedInTestBase{
 		Log.d(TAG, "Checked the permission of User B");
 		chatAction.backToLobby();
 		
-		Log.d(TAG, "Switch Account to user C");
+		Log.d(TAG, "Switching Account to user C");
 		switchAccountToTestAc4();
 		Log.d(TAG, "Switch Account to user C");
 		Log.d(TAG, "Checking the permission of user C (should not have change)");
@@ -77,23 +77,63 @@ public class TestPrivateChatPermissionAssign extends AndroidLoggedInTestBase{
 		
 		Log.d(TAG, ">>> Test: testRaiseUserToMod   -- End -- <<<");
 	}
-	
-	/**
-	 * User A add user
-	 * User A raise user B to be Admin
-	 * User A should not be Admin any more
-	 * User B is Admin
-	 * User B can kick user A
-	 * User B can assign User C to mod
-	 * User A check room exist
-	 * User C check he is mod now
-	 * User B delete room
-	 */
-//	@LargeTest
-//	public void testRaiseUserToAdmin() {
-//		
-//		
-//	}
+
+	@LargeTest
+	public void testRaiseUserToAdmin() {
+		String oldAdmin = allUserName[0];
+		String newAdmin = allUserName[1];
+		String victim = allUserName[2];
+
+		Log.d(TAG, ">>> Test: testRaiseUserToAdmin   -- Start -- <<<");
+
+		Log.d(TAG, "Start creating chat room");
+		String roomName = lobbyAction.createChatRoomUntilSuccess();
+		Log.d(TAG, "Created chat room");		
+
+		Log.d(TAG, "Start adding other user to chat room");
+		chatAction.addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
+		Log.d(TAG, "Added the user to chat room");
+
+		Log.d(TAG, "Start raise userB to Admin");
+		lobbyAction.goChatRoom(roomName);
+		chatAction.raiseUserToAdmin(newAdmin);
+		Log.d(TAG, "Raised userB to Admin");
+		device().goBackToActivity("ChatRoomActivity");
+		Log.d(TAG, "Checking User A permission(should be mod)");
+		checkModPermission(victim, USER_SMALL_POTATO);
+		Log.d(TAG, "Checked");
+		chatAction.backToLobby();
+		
+		Log.d(TAG, "Switching Account to user B");
+		switchAccountToTestAc3();
+		Log.d(TAG, "Switched Account to user B");
+		Log.d(TAG, "Checking user B have the permission of Admin");
+		lobbyAction.goChatRoom(roomName);
+		checkAdminPermission(victim, USER_SMALL_POTATO);
+		device().goBackToActivity("ChatRoomActivity");
+		checkAdminPermission(oldAdmin, USER_MOD);
+		Log.d(TAG, "Checked the permission of User B");
+		chatAction.backToLobby();
+		
+		Log.d(TAG, "Switching Account to user C");
+		switchAccountToTestAc4();
+		Log.d(TAG, "Switched Account to user C");
+		Log.d(TAG, "Checking the permission of user C (should not have change)");
+		lobbyAction.goChatRoom(roomName);
+		checkCurrentUserPermission(newAdmin);
+		Log.d(TAG, "Checked the permission of User C");
+		chatAction.backToLobby();
+
+		Log.d(TAG, "Switching Account to user B");
+		switchAccountToTestAc3();
+		Log.d(TAG, "Switched Account to user B");
+		Log.d(TAG, "Delete chat room");
+		lobbyAction.goChatRoom(roomName);
+		chatAction.deleteChatRoom();
+		Log.d(TAG, "Room Deleted");
+		
+		Log.d(TAG, ">>> Test: testRaiseUserToAdmin   -- End -- <<<");
+	}
 	
 	//=====================================
 	public void checkAlertDialogAfterYouBecomeMod() {
@@ -152,7 +192,7 @@ public class TestPrivateChatPermissionAssign extends AndroidLoggedInTestBase{
 		}
 		device().goBack();
 		assertTrue("Admin should be able to see the edit button",
-				device().searchButton("Edit"));
+				device().searchText("Edit"));
 	}
 
 }
