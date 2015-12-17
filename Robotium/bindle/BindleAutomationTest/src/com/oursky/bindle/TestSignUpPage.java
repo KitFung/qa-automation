@@ -47,9 +47,12 @@ public class TestSignUpPage extends AndroidTestBase {
 //==============================================
 	@Smoke
 	public void testSignUp() {
+		Log.d(TAG, ">>> Test: testSignUp   -- Start -- <<<");
+
 		device().waitForActivity("SignUpActivity");
 		String tmpScreenName = newScreenName;
 		int i = 0;
+		Log.d(TAG, "Signing up");
 		while(true) {
 			tmpScreenName = newScreenName + i;
 			signUp(tmpScreenName + "@testing.com", password, bDate);
@@ -61,9 +64,15 @@ public class TestSignUpPage extends AndroidTestBase {
 			i++;
 		}
 		continueSignUp(tmpScreenName);
+		Log.d(TAG, "Signed up");
+		
+		Log.d(TAG, "Check sms page appear");
 		device().assertCurrentActivity("Valid sign up fail", "SMSVerificationActivity");
         assertTrue("The sms alert message haven't appera after sign up", device().searchText("Login with existing account"));
+        Log.d(TAG, "Checked sms page");
         device().clickOnText("Login with existing account");
+
+        Log.d(TAG, ">>> Test: testSignUp   -- End -- <<<");
 	}
 
 // Part 2. Failed Sign up
@@ -72,102 +81,148 @@ public class TestSignUpPage extends AndroidTestBase {
 	//When sign up with a registered email
 	@SmallTest
 	public void testSignUpWithRegisteredEmail() {
+		Log.d(TAG, ">>> Test: testSignUpWithRegisteredEmail   -- Start -- <<<");
+
 		device().waitForActivity("SignUpActivity");
 		
+		Log.d(TAG, "Checking the response when try to sign up with a used account");
 		signUp(registeredEmail, password, bDate);
-		
 		device().assertCurrentActivity("Invalid sign up fail (Registered account)", "SignUpActivity");
         assertTrue("Wrong toast displayed (Registered account)", device().searchText(registeredAccountMsg));
+        Log.d(TAG, "Checked");
+
         device().clickOnText("OK");
+        
+        Log.d(TAG, ">>> Test: testSignUpWithRegisteredEmail   -- End -- <<<");
 	}
 	
     //When user input nothing and press Next
 	@SmallTest
     public void testSignUpWithoutEnterAnyInfo() {
+		Log.d(TAG, ">>> Test: testSignUpWithoutEnterAnyInfo   -- Start -- <<<");
+		
     	device().waitForActivity("SignUpActivity");
-        
+    	
+    	Log.d(TAG, "Check response when sign up without any info");
     	signUp("", "", null);
-
         device().assertCurrentActivity("Invalid sign up fail (Empty info)", "SignUpActivity");
         assertTrue("Wrong toast displayed (Empty info)", device().searchText(wrongEmailMsg));
-    }
+        Log.d(TAG, "Checked");
+        
+        Log.d(TAG, ">>> Test: testSignUpWithoutEnterAnyInfo   -- End -- <<<");
+	}
 	
 	//When user input wrong email format
 		@SmallTest
 	    public void testSignUpWithWrongEmailFormat() {
+			Log.d(TAG, ">>> Test: testSignUpWithWrongEmailFormat   -- Start -- <<<");
+
 	    	device().waitForActivity("SignUpActivity");
 	        
+	    	Log.d(TAG, "Check response when sign up with wrong email format");
 	    	signUp("test", password, bDate);
-
 	    	device().assertCurrentActivity("Invalid sign up fail (Wrong Email Format)", "SignUpActivity");
 	        assertTrue("Wrong toast displayed (Wrong Email Format)", device().searchText(wrongEmailMsg));
-	    }
+	        Log.d(TAG, "Checked");
+
+	        Log.d(TAG, ">>> Test: testSignUpWithWrongEmailFormat   -- End -- <<<");
+		}
     
 	//When user have not input the email
 	@SmallTest
     public void testSignUpMissingEmail() {
+		Log.d(TAG, ">>> Test: testSignUpMissingEmail   -- Start -- <<<");
+
     	device().waitForActivity("SignUpActivity");
         
+    	Log.d(TAG, "Check response when sign up with missing email");
     	signUp("", password, bDate);
-
     	device().assertCurrentActivity("Invalid sign up fail (Missing Email)", "SignUpActivity");
         assertTrue("Wrong toast displayed (Missing Email)", device().searchText(wrongEmailMsg));
-    }	
+        Log.d(TAG, "Checked");
+
+        Log.d(TAG, ">>> Test: testSignUpMissingEmail   -- End -- <<<");
+	}	
 	
 	//When user have not input the password
 	@SmallTest
     public void testSignUpMissingPassword() {
+		Log.d(TAG, ">>> Test: testSignUpMissingPassword   -- Start -- <<<");
+
     	device().waitForActivity("SignUpActivity");
         
+    	Log.d(TAG, "Check response when sign up with missing password");
     	signUp(email, "", bDate);
-
     	device().assertCurrentActivity("Invalid sign up fail (Missing Password)", "SignUpActivity");
         assertTrue("Wrong toast displayed (Missing Password)", device().searchText(emptyPasswordMsg));
+        Log.d(TAG, "Checked");
+        
+        Log.d(TAG, ">>> Test: testSignUpMissingPassword   -- End -- <<<");
     }
 	
 	//When user input wrong password format
 	@SmallTest
     public void testSignUpWrongPasswordFormat() {
+		Log.d(TAG, ">>> Test: testSignUpWrongPasswordFormat   -- Start -- <<<");
+
     	device().waitForActivity("SignUpActivity");
         
+    	Log.d(TAG, "Check response when sign up with wrong password format");
     	signUp(email, "12345", bDate);
-
     	device().assertCurrentActivity("Invalid sign up fail (Wrong Password Format)", "SignUpActivity");
         assertTrue("Wrong toast displayed (Wrong Password Format)", device().searchText(wrongPasswordMsg));
+        Log.d(TAG, "Checked");
+        
+        Log.d(TAG, ">>> Test: testSignUpWrongPasswordFormat   -- End -- <<<");
     }
 	
 	//When user haven't input birthday
 	@SmallTest
 	public void testMissingBDate() {
+		Log.d(TAG, ">>> Test: testMissingBDate   -- Start -- <<<");
+
 		device().waitForActivity("SignUpActivity");
         
+		Log.d(TAG, "Check response when sign up without brithday");
     	signUp(email, password, null);
-    	
     	device().assertCurrentActivity("Invalid sign up fail (Missing birthday)", "SignUpActivity");
         assertTrue("Wrong toast displayed (Missing birthday)", device().searchText(emptyBDateMsg));
+        Log.d(TAG, "Checked");
+	
+        Log.d(TAG, ">>> Test: testMissingBDate   -- End -- <<<");
 	}
 	
 	//When user input wrong birthday
 	@SmallTest
 	public void testWrongBDate() {
+		Log.d(TAG, ">>> Test: testWrongBDate   -- Start -- <<<");
+	
 		device().waitForActivity("SignUpActivity");
         
+		Log.d(TAG, "Check response when sign up with wrong brithday");
     	signUp(email, password, wrongBDate);
-    	
     	device().assertCurrentActivity("Invalid sign up fail (Missing birthday)", "SignUpActivity");
         assertTrue("Wrong toast displayed (Missing birthday)", device().searchText(wrongBDateMsg));
+        Log.d(TAG, "Checked");
+        
+        Log.d(TAG, ">>> Test: testWrongBDate   -- End -- <<<");
 	}
 	
 	//When user have not input screen name with space
 	@SmallTest
     public void testSignUpScreenNameWithSpace() {
+		Log.d(TAG, ">>> Test: testSignUpScreenNameWithSpace   -- Start -- <<<");
+
     	device().waitForActivity("SignUpActivity");
         
+    	Log.d(TAG, "Check response when sign up with screen name with space");
     	signUp(email, password, bDate);
     	continueSignUp("t t");
-    	
     	device().assertCurrentActivity("Invalid sign up fail (Wrong screen name format)", "CreateScreenNameActivity");
         assertTrue("Wrong reminder displayed (Wrong screen name format)", device().searchText(wrongScreenNameReminder));
+        Log.d(TAG, "Checked");
+        
+        Log.d(TAG, ">>> Test: testSignUpScreenNameWithSpace   -- End -- <<<");
     }
 	
 //=============================

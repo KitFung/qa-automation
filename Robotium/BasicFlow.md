@@ -22,7 +22,7 @@ android {name}.apk androiddebugkey`
         android:targetPackage="com.bindlechat.Bindle" />
     ```
 	- ** IMPORTANT ** 
-		- Download [robotium](http://mvnrepository.com/artifact/com.jayway.android.robotium/robotium-solo/5.2.1) and import to your project.
+		- Download [robotium](https://github.com/RobotiumTech/robotium/wiki/Downloads) and import to your project.
 		- Remember to export it.
 			- Eclipse -> Java Build Bath -> Order and Export -> Select robotium and let it to the top.
 4. Install it in to the device.
@@ -38,6 +38,11 @@ android {name}.apk androiddebugkey`
 You can get more detail from:
 
 [https://robotium.googlecode.com/files/RobotiumForBeginners.pdf](https://robotium.googlecode.com/files/RobotiumForBeginners.pdf)
+
+Check testing process
+---
+1. Open logcat
+2. Using "bindle-test" to filter the message 
 
 Run Test on One Device
 ---
