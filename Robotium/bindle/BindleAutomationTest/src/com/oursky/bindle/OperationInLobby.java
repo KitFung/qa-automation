@@ -8,7 +8,6 @@ import com.robotium.solo.Solo;
 
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageView;
 import android.widget.TextView;
 
 public class OperationInLobby {
@@ -22,8 +21,7 @@ public class OperationInLobby {
 	public void goChatRoom(String name) {
 		device.clickOnText("#"+name);
 		device.waitForActivity("ChatRoomActivity");
-		device.sleep(4000);
-		device.waitForView((ImageView) device.getView("id/info_icon_image_view"));
+		device.sleep(5000);
 	}
 
 	public void createChatRoom(String roomName) {
@@ -47,7 +45,7 @@ public class OperationInLobby {
 					device.sleep(2000);
 					device.clickOnView((TextView) device.getView("id/action_done"));
 					device.waitForActivity("ChatRoomActivity");
-					device.waitForView((ImageView) device.getView("id/info_icon_image_view"));
+					device.assertCurrentActivity("", "ChatRoomActivity");
 					break;
 				}catch(AssertionFailedError e) {
 					if(device.searchText("This chatroom already exists.")) {

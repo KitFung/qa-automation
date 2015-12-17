@@ -8,6 +8,7 @@ import com.robotium.solo.Solo.Config;
 @SuppressWarnings("rawtypes")
 public class AndroidTestBase extends ActivityInstrumentationTestCase2{
 	
+	public final String TAG = "bindle-test";
 	private Solo mDevice;
 
 	public Solo device() {
