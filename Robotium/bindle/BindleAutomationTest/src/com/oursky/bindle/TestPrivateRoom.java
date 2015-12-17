@@ -57,7 +57,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		String sender = allUserName[0];
 		String receiver = allUserName[1];
 
-		Log.d(TAG, ">>> Test: testRaiseUserToMod   -- Start -- <<<");
+		Log.d(TAG, ">>> Test: testSendDifferentTypeOfMessage   -- Start -- <<<");
 		Log.d(TAG, "Creating Chat Room");
 		String roomName = lobbyAction.createChatRoomUntilSuccess();
 		Log.d(TAG, "Created Chat Room");
@@ -148,7 +148,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		Log.d(TAG, "User A deleting chatroom");
 		chatAction.deleteChatRoom();
 		Log.d(TAG, "User A deleted chatroom");
-		Log.d(TAG, ">>> Test: testRaiseUserToMod   -- End -- <<<");
+		Log.d(TAG, ">>> Test: testSendDifferentTypeOfMessage   -- End -- <<<");
 	}
 	
 	/**
@@ -169,7 +169,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		String sender = allUserName[0];
 		String receiver = allUserName[1];
 		
-		Log.d(TAG, ">>> Test: testRaiseUserToMod   -- Start -- <<<");
+		Log.d(TAG, ">>> Test: testTheBlueLabelForMention   -- Start -- <<<");
 		Log.d(TAG, "Creating Chat Room");
 		String roomName = lobbyAction.createChatRoomUntilSuccess();
 		Log.d(TAG, "Created Chat Room");
@@ -215,7 +215,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		Log.d(TAG, "User A deleting the chat room");
 		chatAction.deleteChatRoom();
 		Log.d(TAG, "User A deleted the chat room");
-		Log.d(TAG, ">>> Test: testRaiseUserToMod   -- End -- <<<");
+		Log.d(TAG, ">>> Test: testTheBlueLabelForMention   -- End -- <<<");
 	}
 	
 	@LargeTest

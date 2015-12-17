@@ -136,7 +136,7 @@ p4 | testing case apk package name
 Example
 
 ```
-source autoinstall.sh ~/Desktop/selendroid/s1/bindle.apk com.bindlechat.Bindle  ~/AndroidStudioProjects/qa-automation/Robotium/bindle/BindleAutomationTest/bin/BindleAutomationTest.apk com.oursky.bindle.test
+source autoinstall.sh ~/Desktop/selendroid/app-prod-release.apk com.bindlechat.BindleTest  ~/AndroidStudioProjects/qa-automation/Robotium/bindle/BindleAutomationTest/bin/BindleAutomationTest.apk com.oursky.bindle.test
 
 ```
 
