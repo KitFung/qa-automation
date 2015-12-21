@@ -85,6 +85,7 @@ public class OperationInChat {
 	}
 	
 	public void backToLobby() {
+		device.sleep(2000);
 		device.goBackToActivity("LobbyActivity");
 	}
 	

@@ -1,6 +1,7 @@
 package com.oursky.bindle;
 
 import android.test.ActivityInstrumentationTestCase2;
+import android.util.Log;
 
 import com.robotium.solo.Solo;
 import com.robotium.solo.Solo.Config;
@@ -28,6 +29,7 @@ public class AndroidTestBase extends ActivityInstrumentationTestCase2{
     	config.timeout_small = 30000;
         mDevice = new Solo(getInstrumentation(), config, getActivity());
         mDevice.unlockScreen();
+        Log.d(TAG, "************************************");
     }
 
     @Override

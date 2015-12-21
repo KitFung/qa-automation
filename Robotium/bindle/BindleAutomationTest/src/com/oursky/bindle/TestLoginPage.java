@@ -6,6 +6,7 @@ import com.robotium.solo.Solo;
 
 import android.test.suitebuilder.annotation.SmallTest;
 import android.test.suitebuilder.annotation.Smoke;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -29,10 +30,16 @@ public class TestLoginPage extends AndroidTestBase {
 	//Login with email
 	@SmallTest
     public void testLoginWithEmailWithSms() {
+		Log.d(TAG, ">>> Test: testLoginWithEmailWithSms   -- Start -- <<<");
+
         goToLoginPage();
+        Log.d(TAG, "logging in and check the sms alert box");
     	login(emailWithSmsVertify, passwordWithSmsVertify);
     	successLoginCheckingWithSms();
+    	Log.d(TAG, "logged it and alert box have appear");
     	logOutInSMSPage();
+    	
+    	Log.d(TAG, ">>> Test: testLoginWithEmailWithSms   -- End -- <<<");
     }
     
     public void successLoginCheckingWithSms() {
@@ -55,42 +62,67 @@ public class TestLoginPage extends AndroidTestBase {
 	//Login with email
 	@Smoke
     public void testLoginWithEmail() {
+		Log.d(TAG, ">>> Test: testLoginWithEmail   -- Start -- <<<");
+		
+		Log.d(TAG, "logging in with email");
         goToLoginPage();
     	login(email, password);
     	successLoginChecking(email);
+    	Log.d(TAG, "Successfully login with email");
         logOut();
+        
+        Log.d(TAG, ">>> Test: testLoginWithEmail   -- End -- <<<");
     }
     
     //Login with user name
 	@SmallTest
     public void testLoginWithUserName() {
+		Log.d(TAG, ">>> Test: testLoginWithEmail   -- Start -- <<<");
+		
+		Log.d(TAG, "logging in with user name");
     	goToLoginPage();
     	login(userName, password);
     	successLoginChecking(userName);
+    	Log.d(TAG, "Successfully login with user name");
         logOut();
-    }
+        
+        Log.d(TAG, ">>> Test: testLoginWithEmail   -- End -- <<<");
+	}
     
     //Login using uppercase account name
 	@SmallTest
     public void testLoginWithUpperCaseUserName() {
+		Log.d(TAG, ">>> Test: testLoginWithUpperCaseUserName   -- Start -- <<<");
+
+		Log.d(TAG, "logging in with upperCase user name");
     	goToLoginPage();
     	login(userName.toUpperCase(Locale.ENGLISH), password);
     	successLoginChecking(userName.toUpperCase(Locale.ENGLISH));
+    	Log.d(TAG, "Successfully login with upperCase user name");
         logOut();
+        
+        Log.d(TAG, ">>> Test: testLoginWithUpperCaseUserName   -- End -- <<<");
     }
     
     //Login in landscape with correct info
 	@SmallTest
     public void testLoginInLandscape() {
+		Log.d(TAG, ">>> Test: testLoginInLandscape   -- Start -- <<<");
+		
+		Log.d(TAG, "Change orientation to Landscape");
     	device().setActivityOrientation(Solo.LANDSCAPE);
-    	
+    	Log.d(TAG, "logging in");
     	goToLoginPage();
 		login(userName, password);
 		successLoginChecking(userName);
+		Log.d(TAG, "logged in");
         logOut();
     	
     	device().setActivityOrientation(Solo.PORTRAIT);
-    }
+    	Log.d(TAG, "Change orientation to Portrait");
+
+    	Log.d(TAG, ">>> Test: testLoginInLandscape   -- End -- <<<");
+	}
     
     public void successLoginChecking(String loginAccount) {
     	device().waitForActivity("LobbyActivity");

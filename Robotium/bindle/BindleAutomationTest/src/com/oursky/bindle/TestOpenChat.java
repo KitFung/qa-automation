@@ -3,6 +3,7 @@ package com.oursky.bindle;
 import java.util.UUID;
 
 import android.test.suitebuilder.annotation.LargeTest;
+import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
 
@@ -31,24 +32,44 @@ public class TestOpenChat extends AndroidLoggedInTestBase{
 	 */
 	
 	@LargeTest
-	public void testOpenChat(){		 
+	public void testOpenChat(){
+		Log.d(TAG, ">>> Test: testOpenChat   -- Start -- <<<");
+
+		Log.d(TAG, "Finding the open chat room");
 		findOpenChat();
+		Log.d(TAG, "Found the open chat room");
+		
+		Log.d(TAG, "Sending normal message");
 		chatAction.talkNormal(s);
+		Log.d(TAG, "Sent normal message");
+
+		Log.d(TAG, "Sending GIF");
 		chatAction.sendFirstGIF();
+		Log.d(TAG, "Sent GIF");
+
 		device().sleep(2000);
 
+		Log.d(TAG, "Sending emote");
 		chatAction.emoteText(s);
-		device().waitForText(s);
+		Log.d(TAG, "Sent emote");
+
 		device().sleep(2000);
 		
+		Log.d(TAG, "Checking response when whisper with no target");
 		chatAction.whisperUser("", s); // sendWhisperWithOutTarget
 		checkWhisperWithOutTarget(s);
+		Log.d(TAG, "Checked");
+
 		device().sleep(2000);
 		
+		Log.d(TAG, "Checking response when whisper to @chat");
 		chatAction.whisperUser("chat", s); // sendWhisperToAll
 		checkWhisperToAll(s);
+		Log.d(TAG, "Checked");
 
 		chatAction.leaveChat();
+
+		Log.d(TAG, ">>> Test: testOpenChat   -- End -- <<<");
 	}
 	
 	//===============================================

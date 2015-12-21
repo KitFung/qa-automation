@@ -8,6 +8,7 @@ import com.robotium.solo.Solo;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class OperationInLobby {
@@ -67,5 +68,18 @@ public class OperationInLobby {
 		device.clearEditText((EditText) device.getView("id/search_edit_text"));
     	device.enterText((EditText) device.getView("id/search_edit_text"), roomName);
         device.clickOnView((TextView) device.getView("id/action_search"));
+	}
+	
+	public void joinChatRoom(String descript) {
+		device.waitForActivity("id/channel_name_text_view");
+		device.clickInList(0);
+		device.waitForActivity("JoinChatRoomActivity");
+		device.enterText((EditText) device.getView("id/message_edit_text_view"), descript);
+		device.clickOnView((ImageButton) device.getView("id/join_button"));
+		
+		//Some bad magic before this bug in apps have been fix
+		if (device.waitForText("An error has occurred")) {
+			device.clickOnButton("OK");
+		}
 	}
 }

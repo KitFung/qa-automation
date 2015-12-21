@@ -58,6 +58,7 @@ public class AndroidLoggedInTestBase extends AndroidTestBase{
 	}
 	
 	public void logOut() {
+		device().goBackToActivity("LobbyActivity");
         device().clickOnView((TextView) device().getView("action_settings"));
         device().waitForActivity("SettingsActivity");
     	device().clickOnText("Log out");
