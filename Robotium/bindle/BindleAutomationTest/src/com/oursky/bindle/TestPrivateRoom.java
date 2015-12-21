@@ -3,6 +3,7 @@ package com.oursky.bindle;
 import java.util.Arrays;
 
 import android.test.suitebuilder.annotation.LargeTest;
+import android.test.suitebuilder.annotation.Smoke;
 import android.util.Log;
 import android.widget.Button;
 import android.widget.ImageButton;
@@ -29,6 +30,22 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		lobbyAction = new OperationInLobby(device());
 	}
 	
+	@Smoke
+	public void testDeleteChatRoom() {
+		Log.d(TAG, ">>> Test: testDeleteChatRoom   -- Start -- <<<");
+		Log.d(TAG, "Creating Chat Room");
+		lobbyAction.createChatRoomUntilSuccess();
+		Log.d(TAG, "Created Chat Room");
+		Log.d(TAG, "Deleting Chat Room");
+		chatAction.deleteChatRoom();
+		Log.d(TAG, "Deleted Chat Room");
+		Log.d(TAG, "Checking response");
+		checkSuccessDeleteChatRoom();
+		Log.d(TAG, "Checked response");
+		
+		Log.d(TAG, ">>> Test: testDeleteChatRoom   -- End -- <<<");
+	}
+
 	/**
 	 * Flow:
 	 * User A create new room,
@@ -259,7 +276,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		// User B check room exist?
 		Log.d(TAG, "Switching account to User B");
 		switchAccountToTestAc3();
-		Log.d(TAG, "Switching account to User B");
+		Log.d(TAG, "Switched account to User B");
 		checkRoomExist(roomName, false);
 		Log.d(TAG, "User B find the chat room");
 		lobbyAction.searchChatRoom(roomName);
@@ -273,7 +290,7 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		// User C check room exist?
 		Log.d(TAG, "Switching account to User C");
 		switchAccountToTestAc4();
-		Log.d(TAG, "Switching account to User C");
+		Log.d(TAG, "Switched account to User C");
 		checkRoomExist(roomName, true);
 		chatAction.backToLobby();
 		
@@ -311,13 +328,13 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		// User C check room
 		Log.d(TAG, "Switching account to User C");
 		switchAccountToTestAc4();
-		Log.d(TAG, "Switching account to User C");
+		Log.d(TAG, "Switched account to User C");
 		lobbyAction.goChatRoom(roomName);
 		chatAction.backToLobby();
 		// User A kick user B permanently
 		Log.d(TAG, "Switching account to User A");
 		switchAccountToTestAc2();
-		Log.d(TAG, "Switching account to User A");
+		Log.d(TAG, "Switched account to User A");
 		lobbyAction.goChatRoom(roomName);
 		Log.d(TAG, "User A kicking User B permanently");
 		chatAction.kickUser(poorguy, true);
@@ -358,6 +375,10 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 
 	//======================================================================
 
+	private void checkSuccessDeleteChatRoom() {
+		device().assertCurrentActivity("The current activities should be the lobby", "LobbyActivity");
+	}
+	
 	private void checkWhisperTextExist(String sender, String receiver, boolean isExist) {
 		String expectedString = String.format("%s whispered: @%s %s", sender, receiver, whisperText);
 		if (isExist) {
