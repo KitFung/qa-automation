@@ -1,6 +1,5 @@
 package com.oursky.bindle;
 
-import junit.framework.AssertionFailedError;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.test.suitebuilder.annotation.SmallTest;
@@ -49,6 +48,12 @@ public class TestSearchAndJoinPrivateChat extends AndroidLoggedInTestBase{
 		Log.d(TAG, "Checking the join response");
 		checkResponseAfterSendRequest(roomName);
 		Log.d(TAG, "Checked the join response");
+		
+		Log.d(TAG, "Back to lobby and check the room exist");
+		device().goBack();
+		device().clickOnText(roomName);
+		checkTheKnockMessageInLobby();
+		Log.d(TAG, "Checked");
 		
 		Log.d(TAG, "Switching to user A");
 		switchAccountToTestAc2();
@@ -340,6 +345,14 @@ public class TestSearchAndJoinPrivateChat extends AndroidLoggedInTestBase{
 			assertFalse("The chat romm should not exist in the list since you have left after rejected",
 					device().waitForText(roomName));
 		}
+	}
+	
+	public void checkTheKnockMessageInLobby() {
+		String expectedString1 ="*Knock Knock!*";
+		String expectedString2 = "Still waiting for someone to answer your Knock! We'll let you know when someone lets you in.";
+		assertTrue("The knocking message having shown", device().waitForText(expectedString1));
+		assertTrue("The knocking description is incorrectly", device().waitForText(expectedString2));
+		device().clickOnButton("OK");
 	}
 
 	public void checkTheKnockMessage(String user, String roomName, String message) {
