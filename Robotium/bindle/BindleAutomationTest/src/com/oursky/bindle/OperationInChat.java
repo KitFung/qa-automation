@@ -18,7 +18,7 @@ public class OperationInChat {
 		this.device = device;
 	}
 	
-	private void openInfoPage() {
+	public void openInfoPage() {
 		device.sleep(10000); // Just let it fail if it load toooo slow
 		device.clickOnView((ImageView) device.getView("id/info_icon_image_view"));
 		device.waitForActivity("ChatRoomDetailActivity");
@@ -28,7 +28,7 @@ public class OperationInChat {
 		}
 	}
 	
-	private void openEditPage() {
+	public void openEditPage() {
 		device.clickOnView((View) device.getView("id/action_edit"));
 		device.waitForActivity("ChatRoomEditActivity");
 	}
@@ -152,6 +152,19 @@ public class OperationInChat {
 		openOptionMenuForUser(name);
 		device.clickOnText("Promote to Admin");
 		device.clickOnButton("Yes");
+	}
+	
+	public void acceptJoinRequest(String name) {
+		device.clickOnView(device.getView("id/accept_button_view"));
+	}
+	
+	public void rejectJoinRequest(String name, boolean permanently) {
+		device.clickOnView(device.getView("id/reject_button_view"));
+		if (permanently) {
+			device.clickOnText("Permanently");
+		} else {
+			device.clickOnText("Once");
+		}
 	}
 
 }

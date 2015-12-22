@@ -8,7 +8,6 @@ import com.robotium.solo.Solo;
 
 import android.widget.Button;
 import android.widget.EditText;
-import android.widget.ImageButton;
 import android.widget.TextView;
 
 public class OperationInLobby {
@@ -75,11 +74,18 @@ public class OperationInLobby {
 		device.clickInList(0);
 		device.waitForActivity("JoinChatRoomActivity");
 		device.enterText((EditText) device.getView("id/message_edit_text_view"), descript);
-		device.clickOnView((ImageButton) device.getView("id/join_button"));
-		
-		//Some bad magic before this bug in apps have been fix
-		if (device.waitForText("An error has occurred")) {
-			device.clickOnButton("OK");
-		}
+		device.clickOnButton("Join");
+	}
+	
+	public void leaveARejectedRoom(String roomName) {
+		device.clickOnText("#"+ roomName);
+		device.clickOnText("Leave");
+	}
+	
+	public void reknockARejectedRoom(String roomName, String description) {
+		device.clickOnText("#"+ roomName);
+		device.clearEditText((EditText) device.getView("id/message_edit_text_view"));
+		device.enterText((EditText) device.getView("id/message_edit_text_view"), description);
+		device.clickOnText("Knock again");
 	}
 }

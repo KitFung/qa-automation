@@ -173,7 +173,7 @@ public class TestPrivateChatPermissionAssign extends AndroidLoggedInTestBase{
 		device().goBack();
 		
 		assertTrue("Mod should be able to see the edit button",
-				device().searchText("Edit"));
+				device().waitForText("Edit"));
 	}
 	
 	public void checkAdminPermission(String victim, int targetPermission) {
@@ -192,7 +192,7 @@ public class TestPrivateChatPermissionAssign extends AndroidLoggedInTestBase{
 		}
 		device().goBack();
 		assertTrue("Admin should be able to see the edit button",
-				device().searchText("Edit"));
+				device().waitForText("Edit"));
 	}
 
 }

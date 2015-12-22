@@ -427,16 +427,16 @@ public class TestPrivateRoom extends AndroidLoggedInTestBase{
 		device().sleep(4000);
 		if (shouldExist) {
 			assertTrue("The expected chat room is disappear",
-					device().searchText(roomName));
+					device().waitForText(roomName));
 		} else {
 			assertFalse("The chat romm should not exist in the list since you have be kicked out",
-					device().searchText(roomName));
+					device().waitForText(roomName));
 		}
 	}
 	
 	public void checkGetBannedToChat() {
 		assertFalse("Still can be able to knock the chat room which you have been permentaly kicked",
-				device().searchText("Sorry, a moderator has banned you from this chat."));
+				device().waitForText("Sorry, a moderator has banned you from this chat."));
 	}
 	
 	public void checkAbletoKnock(String roomName) {

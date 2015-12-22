@@ -80,7 +80,7 @@ public class TestOpenChat extends AndroidLoggedInTestBase{
 		device().clearEditText((EditText)device().getView("id/search_edit_text"));
     	device().enterText((EditText) device().getView("id/search_edit_text"), openChatRoomName);
     	device().clickOnView((TextView) device().getView("id/action_search"));
-    	while(device().searchText("searching")) {
+    	while(device().waitForText("searching")) {
     		device().sleep(2000);
     	}
     	device().clickOnText("Open Chat");

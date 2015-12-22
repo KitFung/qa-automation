@@ -26,7 +26,7 @@ public class AndroidTestBase extends ActivityInstrumentationTestCase2{
     	super.setUp();
     	Solo.Config config = new Config();
     	config.timeout_large = 20000;
-    	config.timeout_small = 30000;
+    	config.timeout_small = 15000;
         mDevice = new Solo(getInstrumentation(), config, getActivity());
         mDevice.unlockScreen();
         Log.d(TAG, "************************************");
