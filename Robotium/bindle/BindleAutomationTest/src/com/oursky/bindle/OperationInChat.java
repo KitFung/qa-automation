@@ -3,9 +3,11 @@ package com.oursky.bindle;
 import junit.framework.AssertionFailedError;
 import android.view.View;
 import android.widget.Button;
+import android.widget.CompoundButton;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import com.robotium.solo.Solo;
@@ -123,8 +125,6 @@ public class OperationInChat {
 		device.goBackToActivity("ChatRoomActivity");
 	}
 	
-
-	
 	public void deleteChatRoom() {
 		openInfoPage();
 		openEditPage();
@@ -178,6 +178,30 @@ public class OperationInChat {
 		device.clearEditText(descriptionBox);
 		device.enterText(descriptionBox, description);
 		device.clickOnView((View)device.getView("id/action_apply"));
+	}
+	
+	public void modifyOnlyModAddUser(boolean enable) {
+		device.scrollToTop();
+		CompoundButton sw = (CompoundButton) device.getView("id/only_mods_can_let_people_in_switch");
+		while(sw.isChecked() != enable) {
+			device.sleep(1000);
+			device.clickOnView(sw);
+		}
+		do {
+			 // wait until it have finish operation
+		} while(device.waitForView(ProgressBar.class));
+	}
+	
+	public void modifyOnlyModCanUseChat(boolean enable) {
+		device.scrollToTop();
+		CompoundButton sw = (CompoundButton) device.getView("id/only_mods_can_use_at_chat_switch");
+		while(sw.isChecked() != enable) {
+			device.sleep(1000);
+			device.clickOnView(sw); // This part is a bit weird, sometime you can set it by one click, sometime you need to click more than one 
+		}
+		do {
+			 // wait until it have finish operation
+		} while(device.waitForView(ProgressBar.class));
 	}
 
 }

@@ -1,5 +1,7 @@
 package com.oursky.bindle;
 
+import java.util.Arrays;
+
 import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.util.Log;
@@ -90,38 +92,63 @@ public class TestPrivateChatSetting extends AndroidLoggedInTestBase{
 	public void testOnlyModsCanUseChat() {
 		Log.d(TAG, ">>> Test: testOnlyModsCanUseChat   -- Start -- <<<");
 		
+		String mod = allUserName[1];
+		String chatAllTextA = "Hi everybody A";
+		String chatAllTextB = "Hi everybody B";
+		
 		Log.d(TAG, "Start creating chat room");
 		String roomName = lobbyAction.createChatRoomUntilSuccess();
 		Log.d(TAG, "Created chat room");
 		
 		Log.d(TAG, "Adding User B, C to chat room");
+		chatAction.addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
 		Log.d(TAG, "Added User B, C to chat room");
 		
-		Log.d(TAG, "Setting only mods can use @chat");
-		Log.d(TAG, "Set only mods can use @chat");
-		
 		Log.d(TAG, "Raising User B to mod");
+		chatAction.raiseUserToMod(mod);
+		device().clickOnButton("Cool");
 		Log.d(TAG, "Raised User B to mod");
 		
+		Log.d(TAG, "Setting only mods can use @chat");
+		chatAction.modifyOnlyModCanUseChat(true);
+		Log.d(TAG, "Set only mods can use @chat");
+		
 		Log.d(TAG, "Switching Account to User B");
+		chatAction.backToLobby();
+		switchAccountToTestAc3();
 		Log.d(TAG, "Switched Account to User B");
 		
 		Log.d(TAG, "Trying to send a chat message (should success)");
+		lobbyAction.goChatRoom(roomName);
+		device().clickOnButton("Cool");
+		chatAction.mentionSomeone("chat", chatAllTextA);
+		checkChatAllResponse(true, chatAllTextA);
 		Log.d(TAG, "Tried");
 		
 		Log.d(TAG, "Switching Account to User C");
+		chatAction.backToLobby();
+		switchAccountToTestAc4();
 		Log.d(TAG, "Switched Account to User C");
 		
 		Log.d(TAG, "Trying to send a chat message (should failed)");
+		lobbyAction.goChatRoom(roomName);
+		chatAction.mentionSomeone("chat", chatAllTextB);
+		checkChatAllResponse(false, chatAllTextB);
 		Log.d(TAG, "Tried");
 
 		Log.d(TAG, "Switching Account to User A");
+		chatAction.backToLobby();
+		switchAccountToTestAc2();
 		Log.d(TAG, "Switched Account to User A");
 		
 		Log.d(TAG, "Checking the chat room message");
+		lobbyAction.goChatRoom(roomName);
+		checkMessageExist(chatAllTextA, true);
+		checkMessageExist(chatAllTextB, false);
 		Log.d(TAG, "Checked the chat room message");
 		
 		Log.d(TAG, "Deleting the chat room");
+		chatAction.deleteChatRoom();
 		Log.d(TAG, "Deleted the chat room");
 		
 		Log.d(TAG, ">>> Test: testOnlyModsCanUseChat   -- End -- <<<");
@@ -197,4 +224,24 @@ public class TestPrivateChatSetting extends AndroidLoggedInTestBase{
 		TextView tvFromId = (TextView) device().getView("id/channel_description");
 		assertEquals("Some problem occur while checking the changed description", tvFromText, tvFromId);
 	}
+	
+	public void checkMessageExist(String msg, boolean shouldExist) {
+		if(shouldExist) {
+			assertTrue("It haven't show the chat all message", device().waitForText(msg));
+		} else{
+			assertFalse("It have show the chat all message which should be disabled", device().waitForText(msg));
+		}
+		
+	}
+	
+	public void checkChatAllResponse(boolean shouldSuccess, String msg) {
+		if(shouldSuccess) {
+			checkMessageExist(msg, true);
+		} else {
+			assertTrue("It haven't show the warning test while ", 
+					device().waitForText("This chat's settings only allow moderators to use @chat. Ask one of them to blast your message."));
+			device().clickOnText("OK");
+		}
+	}
+
 }
