@@ -158,35 +158,56 @@ public class TestPrivateChatSetting extends AndroidLoggedInTestBase{
 	public void testOnlyModsCanAddNewPeople() {
 		Log.d(TAG, ">>> Test: testOnlyModsCanAddNewPeople   -- Start -- <<<");
 		
+		String mod = allUserName[1];
+		
 		Log.d(TAG, "Start creating chat room");
 		String roomName = lobbyAction.createChatRoomUntilSuccess();
 		Log.d(TAG, "Created chat room");
 		
 		Log.d(TAG, "Adding User B, C to chat room");
+		chatAction.addOtherUser(Arrays.copyOfRange(allUserName, 1, 3));
 		Log.d(TAG, "Added User B, C to chat room");
 		
+		Log.d(TAG, "Raising User B to mod");
+		chatAction.raiseUserToMod(mod);
+		device().clickOnButton("Cool");
+		Log.d(TAG, "Raised User B to mod");
+
 		Log.d(TAG, "Setting only mods can add new people");
+		chatAction.modifyOnlyModAddUser(true);
 		Log.d(TAG, "Set only mods can add new people");
 		
-		Log.d(TAG, "Raising User B to mod");
-		Log.d(TAG, "Raised User B to mod");
-		
 		Log.d(TAG, "Switching Account to User B");
+		chatAction.backToLobby();
+		switchAccountToTestAc3();
 		Log.d(TAG, "Switched Account to User B");
 		
 		Log.d(TAG, "Trying to add new user (should success)");
+		lobbyAction.goChatRoom(roomName);
+		device().clickOnButton("Cool");
+		String [] joyz = {"joyz"};
+		chatAction.addOtherUser(joyz);
 		Log.d(TAG, "Tried");
 		
 		Log.d(TAG, "Switching Account to User C");
+		chatAction.backToLobby();
+		switchAccountToTestAc4();
 		Log.d(TAG, "Switched Account to User C");
 		
 		Log.d(TAG, "Trying to add new user (should failed)");
+		lobbyAction.goChatRoom(roomName);
+		chatAction.openInfoPage();
+		checkAddUserRowExist(false);
 		Log.d(TAG, "Tried");
 
 		Log.d(TAG, "Switching Account to User A");
+		chatAction.backToLobby();
+		switchAccountToTestAc2();
 		Log.d(TAG, "Switched Account to User A");
 		
 		Log.d(TAG, "Deleting the chat room");
+		lobbyAction.goChatRoom(roomName);
+		chatAction.deleteChatRoom();
 		Log.d(TAG, "Deleted the chat room");
 		
 		Log.d(TAG, ">>> Test: testOnlyModsCanAddNewPeople   -- End -- <<<");
@@ -232,6 +253,15 @@ public class TestPrivateChatSetting extends AndroidLoggedInTestBase{
 			assertFalse("It have show the chat all message which should be disabled", device().waitForText(msg));
 		}
 		
+	}
+	
+	public void checkAddUserRowExist(boolean shouldExist) {
+		String addUserRowText = "Add by Username";
+		if(shouldExist) {
+			assertTrue("It haven't show the add user row", device().waitForText(addUserRowText));
+		} else{
+			assertFalse("It shouldn't show the add user row", device().waitForText(addUserRowText));
+		}
 	}
 	
 	public void checkChatAllResponse(boolean shouldSuccess, String msg) {

@@ -25,7 +25,7 @@ public class OperationInChat {
 		device.clickOnView((ImageView) device.getView("id/info_icon_image_view"));
 		device.waitForActivity("ChatRoomDetailActivity");
 		// wait the info page fully loaded
-		while(!device.searchText("Add by Username")) {
+		while(!device.searchText("Custom Notifications")) {
 			device.sleep(2000);
 		}
 	}
@@ -181,11 +181,11 @@ public class OperationInChat {
 	}
 	
 	public void modifyOnlyModAddUser(boolean enable) {
-		device.scrollToTop();
+		device.scrollUp();
 		CompoundButton sw = (CompoundButton) device.getView("id/only_mods_can_let_people_in_switch");
 		while(sw.isChecked() != enable) {
-			device.sleep(1000);
 			device.clickOnView(sw);
+			device.sleep(3000);
 		}
 		do {
 			 // wait until it have finish operation
@@ -196,8 +196,8 @@ public class OperationInChat {
 		device.scrollToTop();
 		CompoundButton sw = (CompoundButton) device.getView("id/only_mods_can_use_at_chat_switch");
 		while(sw.isChecked() != enable) {
-			device.sleep(1000);
 			device.clickOnView(sw); // This part is a bit weird, sometime you can set it by one click, sometime you need to click more than one 
+			device.sleep(3000);
 		}
 		do {
 			 // wait until it have finish operation
