@@ -19,6 +19,7 @@ public class OperationInLobby {
 	}
 
 	public void goChatRoom(String name) {
+		device.waitForText(name);
 		device.clickOnText("#"+name);
 		device.waitForActivity("ChatRoomActivity");
 		device.sleep(5000);

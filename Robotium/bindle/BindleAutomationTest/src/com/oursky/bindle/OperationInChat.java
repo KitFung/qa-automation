@@ -123,10 +123,16 @@ public class OperationInChat {
 		device.goBackToActivity("ChatRoomActivity");
 	}
 	
+
+	
 	public void deleteChatRoom() {
 		openInfoPage();
 		openEditPage();
 		
+		deleteChatRoomInEditPage();
+	}
+	
+	public void deleteChatRoomInEditPage() {
 		device.clickOnView((Button) device.getView("id/delete_chat_button"));
 		device.clickOnButton("Delete");
 		device.clickOnButton("OK");
@@ -165,6 +171,13 @@ public class OperationInChat {
 		} else {
 			device.clickOnText("Once");
 		}
+	}
+	
+	public void editRoomDescription(String description) {
+		EditText descriptionBox = (EditText)device.getView("id/chat_room_description_edit_text");
+		device.clearEditText(descriptionBox);
+		device.enterText(descriptionBox, description);
+		device.clickOnView((View)device.getView("id/action_apply"));
 	}
 
 }
