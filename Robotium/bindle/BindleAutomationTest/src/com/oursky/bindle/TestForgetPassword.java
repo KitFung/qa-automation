@@ -1,5 +1,7 @@
 package com.oursky.bindle;
 
+import java.util.Locale;
+
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -25,6 +27,9 @@ public class TestForgetPassword extends AndroidTestBase{
 		checkTitle();
 	}
 	
+	// Success case
+	//==========================================
+
 	public void testForgetPasswordWithAcName() {
 		Log.d(TAG, ">>> Test: testForgetPasswordWithAcName   -- Start -- <<<");
 		
@@ -52,6 +57,30 @@ public class TestForgetPassword extends AndroidTestBase{
 
 		Log.d(TAG, ">>> Test: testForgetPasswordWithEmail   -- End -- <<<");
 	}
+	
+	public void testForgetPasswordWithDifferentCase(){
+		Log.d(TAG, ">>> Test: testForgetPasswordWithDifferentCase   -- Start -- <<<");
+		
+		String[] differentCase = 
+			{name.toLowerCase(Locale.ENGLISH), name.toUpperCase(Locale.ENGLISH)};
+		for(String s:differentCase) {
+			Log.d(TAG, String.format("Filling the field and send request by value: %s", s));
+			sendForgetPasswordRequest(s);
+			Log.d(TAG, "Sent");
+			
+			Log.d(TAG, "Checking the response");
+			checkSendRequestSuccess();
+			Log.d(TAG, "Checked");
+			
+			device().clickOnButton("Forgot password?");
+	    	device().waitForActivity("ForgotPasswordActivity");
+		}
+		
+		Log.d(TAG, ">>> Test: testForgetPasswordWithDifferentCase   -- End -- <<<");
+	}
+	
+	// Fail case
+	//=================================================
 	
 	public void testForgetPasswordWithNotExistEmail(){ 
 		Log.d(TAG, ">>> Test: testForgetPasswordWithNotExistEmail   -- Start -- <<<");
@@ -84,16 +113,6 @@ public class TestForgetPassword extends AndroidTestBase{
 
 		Log.d(TAG, ">>> Test: testForgetPasswordWithNotExistEmail   -- End -- <<<");
 	}
-	
-//	public void testForgetPasswordWithWrongCase(){
-//		String[] wrongCase = {
-//				email.toLowerCase(), email.toUpperCase(),
-//				name.toLowerCase(), name.toUpperCase(),
-//				};
-//		for(String s:wrongCase) {
-//			sendForgetPasswordRequest(s);
-//		}
-//	}
 	
 	public void checkTitle() {
 		assertTrue("The forget password page title is wrong",
