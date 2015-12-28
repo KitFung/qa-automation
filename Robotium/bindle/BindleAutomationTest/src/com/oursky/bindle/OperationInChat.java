@@ -124,7 +124,7 @@ public class OperationInChat {
 	public void addOtherUser(String[] allName) {
 		openInfoPage();
 		device.scrollDown();
-		device.sleep(1000);
+		device.sleep(2000);
 		device.clickOnText("Add by Username");
 		device.waitForActivity("AddByUsernameActivity");
 		for(String s: allName) {

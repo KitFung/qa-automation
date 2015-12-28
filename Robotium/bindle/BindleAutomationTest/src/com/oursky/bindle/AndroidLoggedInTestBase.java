@@ -26,26 +26,30 @@ public class AndroidLoggedInTestBase extends AndroidTestBase{
 
 	public void switchAccountToTestAc2() {
 		logOut();
-		logIn(0);
+		logInToDefaultAccount(0);
 	}
 
 	public void switchAccountToTestAc3() {
 		logOut();
-		logIn(1);
+		logInToDefaultAccount(1);
 	}
 	
 	public void switchAccountToTestAc4() {
 		logOut();
-		logIn(2);
+		logInToDefaultAccount(2);
 	}
 	
 	public void logIn() {
-		logIn(0);
+		logInToDefaultAccount(0);
 	}
 	
-	public void logIn(int idx) {
+	public void logInToDefaultAccount(int idx) {
 		String userName = allUserName[idx]; 
 		String password = allUserPassword[idx];
+		logIn(userName, password);
+	}
+	
+	public void logIn(String userName, String password) {
 		device().waitForActivity("WelcomeActivity");
     	device().clickOnButton("Log in");
     	device().waitForActivity("LoginActivity");
