@@ -1,5 +1,9 @@
 package com.oursky.bindle;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import junit.framework.AssertionFailedError;
 import android.view.View;
 import android.widget.Button;
@@ -12,9 +16,30 @@ import android.widget.TextView;
 
 import com.robotium.solo.Solo;
 
+enum NotificationOption{
+	GENERAL_NOTIFI,
+	GENERAL_SOUND,
+	GENERAL_MESSAGE,
+	IMPORTANT_NOTIFI,
+	IMPORTANT_SOUND,
+	IMPORTANT_MESSAGE,
+};
+
 public class OperationInChat {
 	
 	private Solo device;
+	
+	static final Map<NotificationOption, String> notificationComponentsID = Collections.unmodifiableMap(
+		    new HashMap<NotificationOption, String>() {
+				private static final long serialVersionUID = 1L;
+			{
+		    	put(NotificationOption.GENERAL_NOTIFI, "id/general_activity_notification_switch");
+		    	put(NotificationOption.GENERAL_SOUND, "id/general_activity_sound_alert_switch");
+		    	put(NotificationOption.GENERAL_MESSAGE, "id/general_activity_message_preview_switch");
+		    	put(NotificationOption.IMPORTANT_NOTIFI, "id/important_activity_notification_switch");
+		    	put(NotificationOption.IMPORTANT_SOUND, "id/important_activity_sound_alert_switch");
+		    	put(NotificationOption.IMPORTANT_MESSAGE, "id/important_activity_message_preview_switch");
+		    }});	
 	
 	OperationInChat(Solo device) {
 		this.device = device;
@@ -33,6 +58,11 @@ public class OperationInChat {
 	public void openEditPage() {
 		device.clickOnView((View) device.getView("id/action_edit"));
 		device.waitForActivity("ChatRoomEditActivity");
+	}
+	
+	public void openNotificationSettingPage() {
+		device.clickOnView((View) device.getView("id/notification_settings_header"));
+		device.waitForActivity("ChatRoomNotificationSettingsActivity");
 	}
 	
 	public void openOptionMenuForUser(String name) {
@@ -202,6 +232,22 @@ public class OperationInChat {
 		do {
 			 // wait until it have finish operation
 		} while(device.waitForView(ProgressBar.class));
+	}
+	
+	//accept string as params for easier understand.
+	public boolean[] modifyCustomNotification(NotificationOption option, boolean enable) {
+		String id = notificationComponentsID.get(option);
+		CompoundButton btn = (CompoundButton)device.getView(id);
+		while(btn.isChecked() != enable && btn.isEnabled()) {
+			device.clickOnView(btn); // This part is a bit weird, sometime you can set it by one click, sometime you need to click more than one 
+			device.sleep(3000);
+		}
+		boolean[] alteredResult = new boolean[6];
+		for(NotificationOption o: NotificationOption.values()) {
+			String tid = notificationComponentsID.get(o);
+			alteredResult[o.ordinal()] = ((CompoundButton)device.getView(tid)).isChecked();
+		}
+		return alteredResult;
 	}
 
 }

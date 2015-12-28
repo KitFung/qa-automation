@@ -5,6 +5,7 @@ import java.util.Arrays;
 import android.test.suitebuilder.annotation.LargeTest;
 import android.test.suitebuilder.annotation.MediumTest;
 import android.util.Log;
+import android.widget.CompoundButton;
 import android.widget.TextView;
 
 public class TestPrivateChatSetting extends AndroidLoggedInTestBase{
@@ -216,6 +217,7 @@ public class TestPrivateChatSetting extends AndroidLoggedInTestBase{
 	/**
 	 * This test case dosen't test the function of the notification, 
 	 * it just check whether the setting have been saved
+	 * and will the setting of one user affect another user
 	 */
 	@MediumTest
 	public void testCustomNotifications() {
@@ -225,16 +227,59 @@ public class TestPrivateChatSetting extends AndroidLoggedInTestBase{
 		String roomName = lobbyAction.createChatRoomUntilSuccess();
 		Log.d(TAG, "Created chat room");
 		
+		Log.d(TAG, "Adding User B to chat room");
+		String[] users = {allUserName[1]};
+		chatAction.addOtherUser(users);
+		Log.d(TAG, "Added User B to chat room");
+		
 		Log.d(TAG, "Setting the Custom Notifications");
+		chatAction.openInfoPage();
+		chatAction.openNotificationSettingPage();
+		chatAction.modifyCustomNotification(NotificationOption.GENERAL_NOTIFI, true);
+		chatAction.modifyCustomNotification(NotificationOption.GENERAL_SOUND, true);
+		chatAction.modifyCustomNotification(NotificationOption.GENERAL_MESSAGE, false);
+		chatAction.modifyCustomNotification(NotificationOption.IMPORTANT_NOTIFI, false);
+		chatAction.modifyCustomNotification(NotificationOption.IMPORTANT_SOUND, true);
+		boolean[] updatedState = chatAction.modifyCustomNotification(NotificationOption.IMPORTANT_MESSAGE, false);
 		Log.d(TAG, "Set the Custom Notifications");
 		
+		Log.d(TAG, "Comparing the updated status to the expected status");
+		boolean[] expectedStateA = {true, true, false, false, false, false};
+		compareTheNofiticatinoStatus(expectedStateA, updatedState);
+		Log.d(TAG, "Compared the updated status to the expected status");
+		
 		Log.d(TAG, "Leaving and reEnter chat room");
+		chatAction.backToLobby();
+		lobbyAction.goChatRoom(roomName);
 		Log.d(TAG, "reEntered");
 		
 		Log.d(TAG, "Checking the previous change");
+		chatAction.openInfoPage();
+		chatAction.openNotificationSettingPage();
+		checkNotificationStatus(expectedStateA);
+		Log.d(TAG, "Checked");
+		chatAction.backToLobby();
+		
+		Log.d(TAG, "Switching Account to User B");
+		boolean[] expectedStateB = {true, true, true, true, true, true};
+		switchAccountToTestAc3();
+		lobbyAction.goChatRoom(roomName);
+		Log.d(TAG, "Switched");
+		
+		Log.d(TAG, "Checking the notification setting");
+		chatAction.openInfoPage();
+		chatAction.openNotificationSettingPage();
+		checkNotificationStatus(expectedStateB);
 		Log.d(TAG, "Checked");
 		
+		Log.d(TAG, "Switching Account to User A");
+		chatAction.backToLobby();
+		switchAccountToTestAc2();
+		Log.d(TAG, "Switched Account to User A");
+		
 		Log.d(TAG, "Deleting the chat room");
+		lobbyAction.goChatRoom(roomName);
+		chatAction.deleteChatRoom();
 		Log.d(TAG, "Deleted the chat room");
 		
 		Log.d(TAG, ">>> Test: testCustomNotifications   -- End -- <<<");
@@ -271,6 +316,22 @@ public class TestPrivateChatSetting extends AndroidLoggedInTestBase{
 			assertTrue("It haven't show the warning test while ", 
 					device().waitForText("This chat's settings only allow moderators to use @chat. Ask one of them to blast your message."));
 			device().clickOnText("OK");
+		}
+	}
+	
+	public void compareTheNofiticatinoStatus(boolean[] expectedList, boolean[] actualList) {
+		for(int i = 0; i < expectedList.length; i++){
+			assertEquals(expectedList[i], actualList[i]);
+		}
+	}
+	
+	public void checkNotificationStatus(boolean[] statusList) {
+		int counter = 0;
+		for(NotificationOption o: NotificationOption.values()) {
+			String id = OperationInChat.notificationComponentsID.get(o);
+			assertEquals("The previous set notification status haven't been saved", 
+					statusList[counter], ((CompoundButton)device().getView(id)).isChecked());
+			counter++;
 		}
 	}
 
