@@ -2,12 +2,14 @@ package com.oursky.bindle;
 
 import java.util.UUID;
 
+import junit.framework.Assert;
 import junit.framework.AssertionFailedError;
 
 import com.robotium.solo.Solo;
 
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ListView;
 import android.widget.TextView;
 
 public class OperationInLobby {
@@ -22,6 +24,15 @@ public class OperationInLobby {
 		device.waitForText(name);
 		device.clickOnText("#"+name);
 		device.waitForActivity("ChatRoomActivity");
+		device.sleep(5000);
+	}
+	
+	public void refreshRoomList() {
+		device.scrollListToTop(0);
+		ListView listview = (ListView) device.getView("id/channelListView");
+		int location[] = new int[2];
+		listview.getLocationOnScreen(location);
+		device.drag(location[0]+10,location[0]+10,location[1],location[1]+listview.getHeight(),3);
 		device.sleep(5000);
 	}
 
@@ -47,6 +58,7 @@ public class OperationInLobby {
 					device.clickOnView((TextView) device.getView("id/action_done"));
 					device.waitForActivity("ChatRoomActivity");
 					device.assertCurrentActivity("", "ChatRoomActivity");
+					Assert.assertFalse(device.waitForText("Create a chat"));
 					break;
 				}catch(AssertionFailedError e) {
 					if(device.searchText("This chatroom already exists.")) {
