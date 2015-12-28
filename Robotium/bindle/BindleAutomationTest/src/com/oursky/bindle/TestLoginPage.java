@@ -18,6 +18,12 @@ public class TestLoginPage extends AndroidTestBase {
 	public TestLoginPage() throws ClassNotFoundException {
         super(LAUNCHER_ACTIVITY_FULL_CLASSNAME);
     }
+	
+	@Override
+	public void setUp() throws Exception {
+		super.setUp();
+		goToLoginPage();
+	}
     
 // Part 1. Login Success with SMS verify message
 // This part don't need specific test, just test whether it can login and logout
@@ -31,8 +37,6 @@ public class TestLoginPage extends AndroidTestBase {
 	@SmallTest
     public void testLoginWithEmailWithSms() {
 		Log.d(TAG, ">>> Test: testLoginWithEmailWithSms   -- Start -- <<<");
-
-        goToLoginPage();
         Log.d(TAG, "logging in and check the sms alert box");
     	login(emailWithSmsVertify, passwordWithSmsVertify);
     	successLoginCheckingWithSms();
@@ -65,7 +69,6 @@ public class TestLoginPage extends AndroidTestBase {
 		Log.d(TAG, ">>> Test: testLoginWithEmail   -- Start -- <<<");
 		
 		Log.d(TAG, "logging in with email");
-        goToLoginPage();
     	login(email, password);
     	successLoginChecking(email);
     	Log.d(TAG, "Successfully login with email");
@@ -80,7 +83,6 @@ public class TestLoginPage extends AndroidTestBase {
 		Log.d(TAG, ">>> Test: testLoginWithEmail   -- Start -- <<<");
 		
 		Log.d(TAG, "logging in with user name");
-    	goToLoginPage();
     	login(userName, password);
     	successLoginChecking(userName);
     	Log.d(TAG, "Successfully login with user name");
@@ -95,7 +97,6 @@ public class TestLoginPage extends AndroidTestBase {
 		Log.d(TAG, ">>> Test: testLoginWithUpperCaseUserName   -- Start -- <<<");
 
 		Log.d(TAG, "logging in with upperCase user name");
-    	goToLoginPage();
     	login(userName.toUpperCase(Locale.ENGLISH), password);
     	successLoginChecking(userName.toUpperCase(Locale.ENGLISH));
     	Log.d(TAG, "Successfully login with upperCase user name");
@@ -112,7 +113,6 @@ public class TestLoginPage extends AndroidTestBase {
 		Log.d(TAG, "Change orientation to Landscape");
     	device().setActivityOrientation(Solo.LANDSCAPE);
     	Log.d(TAG, "logging in");
-    	goToLoginPage();
 		login(userName, password);
 		successLoginChecking(userName);
 		Log.d(TAG, "logged in");
@@ -143,7 +143,6 @@ public class TestLoginPage extends AndroidTestBase {
     //Login with wrong password
     @SmallTest
     public void testLoginWithWrongPassword() {
-    	goToLoginPage();
     	login(userName, "wrong");
     	assertTrue("Invalid log in fail (Wrong password)",
     			device().searchText("That seems to be the wrong password. Try again."));
@@ -152,7 +151,6 @@ public class TestLoginPage extends AndroidTestBase {
     //Login without user account and password
     @SmallTest
     public void testLoginMissingAccountAndPassword() {
-    	goToLoginPage();
     	login("", "");
         assertTrue("Invalid log in fail (Empty info)",
         		device().searchText("Please provide your email or screen name."));
@@ -161,7 +159,6 @@ public class TestLoginPage extends AndroidTestBase {
     //Login without user account
     @SmallTest
     public void testLoginMissingAccount() {
-    	goToLoginPage();
     	login("", password);
     	assertTrue("Invalid log in fail (Empty account)",
     			device().searchText("Please provide your email or screen name."));
@@ -170,7 +167,6 @@ public class TestLoginPage extends AndroidTestBase {
     //Login without password()
     @SmallTest
     public void testLoginMissingPassword() {
-    	goToLoginPage();
     	login(userName, "");
     	assertTrue("Invalid log in fail (Empty password)",
     			device().searchText("Please provide your password."));
