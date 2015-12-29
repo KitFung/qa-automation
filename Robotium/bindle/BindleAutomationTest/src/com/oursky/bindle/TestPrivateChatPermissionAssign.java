@@ -100,6 +100,8 @@ public class TestPrivateChatPermissionAssign extends AndroidLoggedInTestBase{
 		Log.d(TAG, "Raised userB to Admin");
 		device().goBackToActivity("ChatRoomActivity");
 		Log.d(TAG, "Checking User A permission(should be mod)");
+		checkAlertDialogAfterYouBecomeMod();
+		device().clickOnButton(0);
 		checkModPermission(victim, USER_SMALL_POTATO);
 		Log.d(TAG, "Checked");
 		chatAction.backToLobby();
