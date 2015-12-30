@@ -31,6 +31,7 @@ List of Test Case
 	Test Case | Objective | Test Flow
 	----------|-----------|----------
 	testSignUp|Test the sign up function work properly|Go to Sign Up Page --> Fill in the information --> Click OK --> Check the result(Success)
+	testSignUpAndAutoCreateRoom|Test auto create chat room after sign up|Go to Sign Up Page --> Fill in the information --> Click OK --> Finish the SMS verify --> Check the room list
 	testSignUpWithRegisteredEmail|Test the apps can reject the sign up if the email is registered|Go to Sign Up Page --> Fill in the information with a registered email --> Click OK --> Check the response(Warning message)
 	testSignUpWithoutEnterAnyInfo|Test the apps can reject the sign up if the user haven't input any data|Go to Sign Up Page --> Click OK --> Check the response(Warning message)
 	testSignUpWithWrongEmailFormat|Test the apps can detect the wrong email format and reject the sign up|Fill in the information with a wrong format email --> Click OK --> Check the response(Warning message)

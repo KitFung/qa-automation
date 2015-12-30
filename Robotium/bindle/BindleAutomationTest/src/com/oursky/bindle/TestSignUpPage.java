@@ -7,6 +7,8 @@ import android.test.suitebuilder.annotation.Smoke;
 import android.util.Log;
 import android.widget.EditText;
 import android.widget.LinearLayout;
+import android.widget.ListAdapter;
+import android.widget.ListView;
 import android.widget.TextView;
 
 /**
@@ -14,16 +16,17 @@ import android.widget.TextView;
  */
 public class TestSignUpPage extends AndroidTestBase {
 
-    private static final String LAUNCHER_ACTIVITY_FULL_CLASSNAME = "com.oursky.bindle.SignUpActivity";
+	public static final String LAUNCHER_ACTIVITY_FULL_CLASSNAME = "com.oursky.bindle.WelcomeActivity";
     
     private final Calendar bDate;
     private final Calendar wrongBDate;
     private final String registeredEmail = "TestAc@TestAc.com";
     private final String email = "TestAc2048@TestAc.com";
     private final String password = "TestAc2048";
+    private final String magicPhoneNo = "61234567";
     
     // **** Suggest you to set the new email and screen name everytime you run this test ****
-    private final String newScreenName = "JvhJHBnxlASc";
+    private final String newScreenName = "JvhomMASc";
     
     private final String registeredAccountMsg = "That email address is already in use!";
     private final String wrongEmailMsg = "Please provide correct Email address.";
@@ -31,6 +34,8 @@ public class TestSignUpPage extends AndroidTestBase {
     private final String wrongPasswordMsg = "Please use a minimum of 6 characters in your password.";
     private final String emptyBDateMsg = "Please select your birthday.";
     private final String wrongBDateMsg = "The date doesn't look right.";
+    private final String arbitraryVerifyCode = "1234";
+    private final String regionCodeHK = "+852";
     
     private final String wrongScreenNameReminder = "Letters and numbers only.";
     
@@ -42,6 +47,14 @@ public class TestSignUpPage extends AndroidTestBase {
         wrongBDate = Calendar.getInstance();
         wrongBDate.set(2046, 12, 21);
     }
+	
+	@Override
+	public void setUp() throws Exception{
+		super.setUp();
+		device().waitForActivity("WelcomeActivity");
+    	device().clickOnButton("Sign up");
+    	device().waitForActivity("SignUpActivity");
+	}
 
 // Part 1. Success Sign up
 //==============================================
@@ -73,6 +86,56 @@ public class TestSignUpPage extends AndroidTestBase {
         device().clickOnText("Login with existing account");
 
         Log.d(TAG, ">>> Test: testSignUp   -- End -- <<<");
+	}
+	
+	@Smoke
+	public void testSignUpAndAutoCreateRoom() {
+		Log.d(TAG, ">>> Test: testSignUpAndAutoCreateRoom   -- Start -- <<<");
+
+		device().waitForActivity("SignUpActivity");
+		String tmpScreenName = newScreenName;
+		int i = 0;
+		Log.d(TAG, "Signing up");
+		while(true) {        
+			tmpScreenName = newScreenName + i;
+			signUp(tmpScreenName + "@testing.com", password, bDate);
+			if (device().searchText(registeredAccountMsg)) {
+				device().clickOnText("OK");
+			} else {
+				break;
+			}
+			i++;
+		}
+		continueSignUp(tmpScreenName);
+		Log.d(TAG, "Signed up");
+		
+		Log.d(TAG, "Check sms page appear");
+		device().assertCurrentActivity("Valid sign up fail", "SMSVerificationActivity");
+        assertTrue("The sms alert message haven't appera after sign up", device().searchText("Login with existing account"));
+        Log.d(TAG, "Checked sms page");
+        
+        Log.d(TAG, "Finishing the sms verification");
+        finishSMSVerify(magicPhoneNo, arbitraryVerifyCode, regionCodeHK);
+        Log.d(TAG, "Finished");
+        
+        device().waitForActivity("LobbyActivity");
+        
+        Log.d(TAG, "Checking the first alert box");
+        assertTrue("The first alert message don't not exist", 
+        		device().waitForText("We made your first chat for you. Check it out!"));
+        device().clickOnButton(0);
+        Log.d(TAG, "Checked");
+        
+        Log.d(TAG, "Checking the auto-create chat room");
+        ListAdapter la = ((ListView) device().getView("id/channelListView")).getAdapter();
+        int sizeOfList = ((ListView) device().getView("id/channelListView")).getAdapter().getCount();
+        assertNull("The number of auto-create chat room is wrong", la.getItem(1));
+        assertEquals("The number of auto-create chat room is wrong", 2, sizeOfList);
+        Log.d(TAG, "Checked");
+        
+        logOut();
+        
+        Log.d(TAG, ">>> Test: testSignUpAndAutoCreateRoom   -- End -- <<<");
 	}
 
 // Part 2. Failed Sign up
@@ -250,8 +313,34 @@ public class TestSignUpPage extends AndroidTestBase {
 	
 	public void continueSignUp(String screenName) {
 		device().waitForActivity("CreateScreenNameActivity");
+		device().clearEditText((EditText) device().getView("id/screen_name_edit_text"));
 		device().enterText((EditText) device().getView("id/screen_name_edit_text"), screenName);
 		TextView doneBtn = (TextView) device().getView("id/action_done");
     	device().clickOnView(doneBtn);
+    	device().waitForActivity("SMSVerificationActivity");
 	}
+	
+	public void finishSMSVerify(String phoneNo, String verifyCode, String regionCode) {
+		device().clearEditText((EditText)device().getView("id/region_code"));
+    	device().enterText((EditText) device().getView("id/region_code"), regionCode);
+        device().clearEditText((EditText)device().getView("id/phone_number"));
+    	device().enterText((EditText) device().getView("id/phone_number"), phoneNo);
+    	device().clickOnButton("Send Code");
+    	
+    	device().sleep(2000);
+    	do {
+    		this.getInstrumentation().sendStringSync(verifyCode);
+    		device().sleep(2000);
+    		device().clickOnView(device().getView("id/container"));
+    		device().clickOnView(device().getView("id/container"));
+    	} while (device().waitForText("Oops"));
+		device().clickOnButton("Done");
+	}
+	
+	public void logOut() {
+		device().goBackToActivity("LobbyActivity");
+        device().clickOnView((TextView) device().getView("action_settings"));
+        device().waitForActivity("SettingsActivity");
+    	device().clickOnText("Log out");
+    }
 }
